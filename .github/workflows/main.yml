@@ -1,4 +1,4 @@
-name: SonarQube
+name: Test Action
 on:
   push:
     branches:
@@ -6,7 +6,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  build:
-    name: Build and analyze
+  test:
+    name: test
     runs-on: ubuntu-latest
     steps:
+    - name: Print a sample message
+      run: |
+        echo "this is a sample action"
