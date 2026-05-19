@@ -4,7 +4,7 @@ name: SonarQube
 on:
   push:
     branches:
-      - "Drie-Bums-en-'n-AIBroer"
+      - "Interaction-Systems"
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
