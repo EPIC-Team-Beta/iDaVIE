@@ -1,89 +1,48 @@
-# This code is for a simple sonar scan which doesn't build, which means it works but is less detailed
-# name: SonarQube
-# on:
-#   push:
-#     branches:
-#       - "main"
-#   pull_request:
-#     types: [opened, synchronize, reopened]
-#   workflow_dispatch:
-# jobs:
-#   build:
-#     name: Build and analyze
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-#       - name: SonarCloud Scan
-#         uses: SonarSource/sonarcloud-github-action@master
-#         with:
-#           args: >
-#             -Dsonar.host.url=https://sonarcloud.io
-#             -Dsonar.projectKey=EPIC-Team-Beta_iDaVIE
-#             -Dsonar.organization=epic-team-beta
-#             -Dsonar.exclusions=**/*.meta,**/Library/**,**/Temp/**,**/Obj/**,**/Build/**,**/Logs/**
-# #            -Dsonar.exclusions=**/*
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
 name: SonarQube
+
 on:
+  workflow_dispatch:
   push:
     branches:
-      - "main"
+      - "**"
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:
+
 permissions:
   contents: read
-  pull-requests: read
-env:
-  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
-  SONAR_PROJECT_KEY: EPIC-Team-Beta_iDaVIE
-  SONAR_ORGANIZATION: epic-team-beta
-  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'https://sonarcloud.io' }}
-  SONAR_ANALYSIS_PROJECT: ci/sonar/iDaVIE.SonarAnalysis.csproj
+
 jobs:
-  analysis:
-    name: Analyze
+  smoke-test:
+    name: SonarQube smoke test
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+
+    env:
+      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Install SonarScanner for .NET
+      - name: Validate SonarQube configuration
         run: |
-          dotnet tool install --global dotnet-sonarscanner
-          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+          set -euo pipefail
+          : "${SONAR_HOST_URL:?Missing repository variable SONAR_HOST_URL}"
+          : "${SONAR_TOKEN:?Missing repository secret SONAR_TOKEN}"
 
-      - name: Begin SonarQube analysis
+      - name: Check SonarQube authentication
         run: |
-          dotnet sonarscanner begin \
-            /k:"${SONAR_PROJECT_KEY}" \
-            /o:"${SONAR_ORGANIZATION}" \
-            /d:sonar.token="${SONAR_TOKEN}" \
-            /d:sonar.host.url="${SONAR_HOST_URL}" \
-            /d:sonar.exclusions="**/*.meta,**/Library/**,**/Temp/**,**/Obj/**,**/Build/**,**/Logs/**"
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          set -euo pipefail
+          response="$(curl -fsS --retry 3 --retry-delay 5 --retry-connrefused --connect-timeout 10 \
+            --header "Authorization: Bearer ${SONAR_TOKEN}" \
+            "${SONAR_HOST_URL%/}/api/authentication/validate")"
 
-      - name: Build C# analysis project
+          echo "${response}" | grep -q '"valid"[[:space:]]*:[[:space:]]*true'
+
+      - name: Check SonarQube system status
         run: |
-          dotnet build "${SONAR_ANALYSIS_PROJECT}" \
-            --no-incremental \
-            -p:TreatWarningsAsErrors=false
+          set -euo pipefail
+          response="$(curl -fsS --retry 3 --retry-delay 5 --retry-connrefused --connect-timeout 10 \
+            --header "Authorization: Bearer ${SONAR_TOKEN}" \
+            "${SONAR_HOST_URL%/}/api/system/status")"
 
-      - name: End SonarQube analysis
-        if: always()
-        run: dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          echo "${response}"
+          echo "${response}" | grep -q '"status"[[:space:]]*:[[:space:]]*"UP"'
