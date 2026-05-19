@@ -23,7 +23,7 @@ jobs:
           args: >
             -Dsonar.projectKey=EPIC-Team-Beta_iDaVIE
             -Dsonar.organization=epic-team-beta
-            -Dsonar.inclusions=Assets/Scripts/Menu/**,Assets/Scripts/VoiceCommands/**,Assets/Scripts/VolumeData/VolumeInputController.cs,Assets/Scripts/VolumeData/VolumeCommandController.cs,Assets/Scripts/Editor/**
+            -Dsonar.inclusions=Assets/Scripts/UI/**,Assets/Scripts/Menu/**,Assets/Scripts/VRKeyboard/**,Assets/Scripts/VoiceCommands/**,Assets/Scripts/VolumeData/VolumeInputController.cs,Assets/Scripts/VolumeData/VolumeCommandController.cs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
