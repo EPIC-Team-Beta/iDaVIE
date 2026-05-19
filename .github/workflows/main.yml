@@ -1,4 +1,6 @@
+
 name: SonarQube
+
 on:
   push:
     branches:
@@ -19,6 +21,8 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
+            -Dsonar.projectKey=EPIC-Team-Beta_iDaVIE
+            -Dsonar.organization=epic-team-beta
             -Dsonar.inclusions=Assets/Scripts/Menu/**,Assets/Scripts/VoiceCommands/**,Assets/Scripts/VolumeData/VolumeInputController.cs,Assets/Scripts/VolumeData/VolumeCommandController.cs,Assets/Scripts/Editor/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
