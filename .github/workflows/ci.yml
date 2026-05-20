@@ -1,0 +1,28 @@
+name: CI Static Analysis
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install dotnet-format
+        run: dotnet tool install -g dotnet-format
+
+      - name: Create minimal project for analysis
+        run: |
+          New-Item -ItemType Directory -Force -Path TempAnalysis
+          dotnet new classlib -o TempAnalysis --force
+          Copy-Item Assets\Scripts\Tools\ColorMapEnum.cs TempAnalysis\ColorMapEnum.cs
+
+      - name: Run static analysis
+        run: dotnet build TempAnalysis --no-incremental /warnaserror
