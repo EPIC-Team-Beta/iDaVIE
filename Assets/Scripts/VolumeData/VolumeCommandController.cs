@@ -1,4 +1,4 @@
-﻿/*
+/*
  * iDaVIE (immersive Data Visualisation Interactive Explorer)
  * Copyright (C) 2024 IDIA, INAF-OACT
  *
@@ -43,7 +43,7 @@ namespace VolumeData
 
         // Keywords
         public struct Keywords
-        {
+        {=
             public static readonly string EditThresholdMin = "edit min";
             public static readonly string EditThresholdMax = "edit max";
             public static readonly string EditZAxis = "edit zee axis";
