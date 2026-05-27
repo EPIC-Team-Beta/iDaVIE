@@ -109,11 +109,12 @@ public class CanvassDesktop : MonoBehaviour, IDesktopShell, IDesktopStateCapture
         var histogramHelper = FindObjectOfType<HistogramHelper>();
 
         _fileLoadController = new FileLoadPanelController(
-            this, this,
+            this,
+            GetFirstActiveRenderer,
+            CheckCubesDataSet,
             informationPanelContent, fileLoadCanvassDesktop, mainCanvassDesktop,
             LoadingText, loadTextLabel, progressBar,
             cubeprefab, VolumePlayer, WelcomeMenu,
-            SourceRowPrefab, sourcesPanelContent,
             inputFields, MenuBarBehaviour, quickMenuController);
 
         _renderingController = new RenderingPanelController(renderingPanelContent, this);
