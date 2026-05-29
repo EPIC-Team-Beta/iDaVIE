@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using iDaVIE.Features.Contracts;   // FeatureTable, FeatureColumnInfo
 
 namespace iDaVIE.Features
 {

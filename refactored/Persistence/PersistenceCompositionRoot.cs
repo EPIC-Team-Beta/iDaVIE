@@ -22,8 +22,7 @@
 using iDaVIE.Data;                              // IMaskStateCapture (ST2)
 using iDaVIE.Features;                          // IFeatureStateCapture (ST5)
 using iDaVIE.Interaction;                       // IInteractionStateCapture (ST4)
-using iDaVIE.Kernel.Contracts;                  // Config, ILogSink
-using iDaVIE.Kernel.Contracts.Persistence;      // IVolumeStateCapture (ST1)
+using iDaVIE.Kernel.Contracts;                  // Config, ILogSink, IVolumeStateCapture (ST1)
 using iDaVIE.Rendering.Contracts;               // IRenderStateCapture (ST3)
 using iDaVIE.UI;                                // IDesktopStateCapture (ST6)
 

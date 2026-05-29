@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using iDaVIE.Kernel.Contracts.Types;   // CartesianCoord, FeatureColour
+using iDaVIE.Features.Contracts;       // FeatureTable
 
 namespace iDaVIE.Features
 {

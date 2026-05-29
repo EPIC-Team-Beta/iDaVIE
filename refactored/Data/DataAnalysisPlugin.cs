@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using iDaVIE.Features;
+using iDaVIE.Features.Contracts;   // ISourceStatsProvider, IDataAnalysisPlugin, SourceStats (ST5 driven ports)
 using iDaVIE.Kernel.Contracts.Types;
 
 namespace iDaVIE.Data

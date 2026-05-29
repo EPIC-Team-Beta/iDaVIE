@@ -22,7 +22,7 @@ using System.Linq;
 using iDaVIE.Data;                       // ICoordinateTransformer
 using iDaVIE.Kernel.Contracts;           // IVolumeDataSet
 using iDaVIE.Kernel.Contracts.Types;     // CartesianCoord, VolumeExtents
-// SourceStats, ISourceStatsProvider live in iDaVIE.Features (this namespace) per shared_interfaces.md §5.5.
+using iDaVIE.Features.Contracts;         // SourceStats, ISourceStatsProvider, FeatureTable (ST5 driven ports, §5.5)
 
 namespace iDaVIE.Features
 {

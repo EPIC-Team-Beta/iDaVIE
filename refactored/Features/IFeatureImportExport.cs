@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using iDaVIE.Kernel.Contracts.Types;   // FeatureColour
+using iDaVIE.Features.Contracts;       // FeatureColumnInfo, FeatureTable
 
 namespace iDaVIE.Features
 {
@@ -20,8 +21,6 @@ namespace iDaVIE.Features
         Flag
     }
 
-    public readonly record struct FeatureColumnInfo(string Name, string Unit, string DataType, string Ucd);
-
     public sealed class FeatureImportMapping
     {
         public IReadOnlyDictionary<SourceMappingOptions, string> ColumnAssignments { get; init; }
@@ -29,12 +28,6 @@ namespace iDaVIE.Features
         public bool                ExcludeExternal { get; init; }
         public string              SetName        { get; init; }
         public FeatureColour       DisplayColour  { get; init; }
-    }
-
-    public sealed class FeatureTable
-    {
-        public IReadOnlyList<FeatureColumnInfo>            Columns { get; init; }
-        public IReadOnlyList<IReadOnlyList<string>>        Rows    { get; init; }
     }
 
     public interface IFeatureImportService

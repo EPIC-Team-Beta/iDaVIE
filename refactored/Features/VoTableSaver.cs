@@ -14,7 +14,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using iDaVIE.Data;                       // ICoordinateTransformer, WorldCoord
 using iDaVIE.Kernel.Contracts.Types;     // CartesianCoord
-// ISourceStatsProvider lives in iDaVIE.Features (this namespace) per shared_interfaces.md §5.5.
+using iDaVIE.Features.Contracts;         // ISourceStatsProvider (ST5 driven port, §5.5)
 
 namespace iDaVIE.Features
 {

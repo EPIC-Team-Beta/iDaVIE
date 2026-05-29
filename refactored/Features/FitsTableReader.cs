@@ -27,19 +27,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using iDaVIE.Features.Contracts;   // IFitsBinaryTableSource, FeatureTable, FeatureColumnInfo
 
 namespace iDaVIE.Features
 {
-    /// <summary>Narrow port over the CFITSIO binary-table surface so this reader
-    /// can be unit-tested with a fake source. Realised in the ST2 plug-in adapter
-    /// (wraps the legacy static FitsReader); the realisation is not part of the
-    /// ST5 contract — see ST5_domain_design.md §8.1.</summary>
-    internal interface IFitsBinaryTableSource
-    {
-        IReadOnlyList<FeatureColumnInfo> ReadColumns(string filePath);
-        IReadOnlyList<IReadOnlyList<string>> ReadRows(string filePath, int columnCount);
-    }
-
     internal sealed class FitsTableReader : IFeatureCatalogueReader
     {
         private readonly IFitsBinaryTableSource _source;

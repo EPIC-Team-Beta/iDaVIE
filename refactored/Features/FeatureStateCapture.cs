@@ -14,7 +14,6 @@
 //                     via IMaskStateCapture + the SourceStatsUpdated bootstrap path.
 
 using System.Collections.Generic;
-using iDaVIE.Kernel.Contracts.Persistence;   // SubcubeBoundsDto
 using iDaVIE.Kernel.Contracts.Types;         // FeatureColour
 
 namespace iDaVIE.Features
@@ -73,6 +72,20 @@ namespace iDaVIE.Features
         public int    BoundsMaxX { get; set; }
         public int    BoundsMaxY { get; set; }
         public int    BoundsMaxZ { get; set; }
+    }
+
+    /// <summary>SelectionBox bounds snapshot (inclusive min / exclusive max, voxel
+    /// units). An ST5 persistence DTO — part of FeatureStateDto, not a kernel type.
+    /// Flat fields keep the DTO self-contained (no CartesianCoord arithmetic on
+    /// restore), matching FeatureEntryDto's bounds convention.</summary>
+    public sealed class SubcubeBoundsDto
+    {
+        public int XMin { get; set; }
+        public int XMax { get; set; }
+        public int YMin { get; set; }
+        public int YMax { get; set; }
+        public int ZMin { get; set; }
+        public int ZMax { get; set; }
     }
 
     /// <summary>M-16 uniform Capture/Restore pattern. Implemented by FeatureSetService

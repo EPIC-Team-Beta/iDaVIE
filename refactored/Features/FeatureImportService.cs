@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using iDaVIE.Kernel.Contracts.Types;   // FeatureColour
+using iDaVIE.Features.Contracts;       // FeatureColumnInfo, FeatureTable
 
 namespace iDaVIE.Features
 {

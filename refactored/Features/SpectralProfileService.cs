@@ -15,7 +15,8 @@
 
 using System.Threading.Tasks;
 using iDaVIE.Kernel.Contracts.Types;   // CartesianCoord
-// IDataAnalysisPlugin and SpectralProfileResult live in iDaVIE.Features (this namespace).
+using iDaVIE.Features.Contracts;       // IDataAnalysisPlugin (ST5 driven port)
+// SpectralProfileResult lives in iDaVIE.Features (this namespace).
 
 namespace iDaVIE.Features
 {

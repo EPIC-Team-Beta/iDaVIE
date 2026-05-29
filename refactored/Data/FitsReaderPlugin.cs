@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using iDaVIE.Features;                       // IFitsBinaryTableSource
+using iDaVIE.Features.Contracts;             // IFitsBinaryTableSource (ST5 driven port)
 using iDaVIE.Kernel.Contracts.Plugins;
 using iDaVIE.Kernel.Contracts.Types;
 

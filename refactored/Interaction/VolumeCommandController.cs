@@ -26,11 +26,10 @@
 
 using System.Text;
 using UnityEngine;
-using iDaVIE.Kernel.Contracts;         // IVolumeRegistry, Config
+using iDaVIE.Kernel.Contracts;         // IVolumeRegistry, Config, IWorkspaceSaveCommand, IWorkspaceLoadCommand
 using iDaVIE.Data;                     // IMaskMutationService, BrushStroke
 using iDaVIE.Rendering.Contracts;      // IRenderSettingsMutator, ColorMapEnum, etc.
 using iDaVIE.Features;                 // IFeatureSetQuery, IFeatureListNavigation
-using iDaVIE.Persistence;             // IWorkspaceSaveCommand, IWorkspaceLoadCommand
 using Debug = UnityEngine.Debug;
 
 namespace iDaVIE.Interaction

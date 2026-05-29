@@ -5,8 +5,7 @@
 
 using System;
 using iDaVIE.Features;                  // IFeatureImportService
-using iDaVIE.Kernel.Contracts;          // IVolumeLoader
-using iDaVIE.Persistence;               // IWorkspaceSaveCommand
+using iDaVIE.Kernel.Contracts;          // IVolumeLoader, IWorkspaceSaveCommand
 
 namespace iDaVIE.UI
 {

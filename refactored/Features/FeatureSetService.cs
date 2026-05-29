@@ -10,9 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using iDaVIE.Kernel.Contracts;             // IVolumeDataSet, LoadStatus, EnumString
-using iDaVIE.Kernel.Contracts.Persistence; // SubcubeBoundsDto
 using iDaVIE.Kernel.Contracts.Types;       // CartesianCoord, FeatureColour
-// ISourceStatsProvider, SourceStats live in iDaVIE.Features (this namespace) per shared_interfaces.md §5.5.
+using iDaVIE.Features.Contracts;           // ISourceStatsProvider, SourceStats (ST5 driven ports, §5.5)
 
 namespace iDaVIE.Features
 {
