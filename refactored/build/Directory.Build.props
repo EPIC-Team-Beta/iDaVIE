@@ -1,0 +1,67 @@
+<Project>
+
+  <!--
+    Shared build settings for the standalone (Route B) compile of the refactored
+    iDaVIE.* skeletons, for NDepend analysis. NDepend reads IL/metadata, so the
+    code must compile but need not run. See refactored/info/README.md
+    "Compiling for NDepend analysis".
+
+    Target framework is netstandard2.1 to match what Unity compiles. UnityEngine /
+    TMPro / SteamVR are managed assemblies referenced by path from a local Unity
+    install — set the three properties below (e.g. on a Windows box with Unity):
+
+      dotnet build iDaVIE.sln \
+        -p:UnityManagedDir="C:\Program Files\Unity\Hub\Editor\<ver>\Editor\Data\Managed\UnityEngine" \
+        -p:UnityPackagesDir="<project>\Library\ScriptAssemblies" \
+        -p:SteamVrDir="<project>\Library\ScriptAssemblies"
+
+    Without them, the ~5 UnityEngine-dependent assemblies (Rendering, Interaction,
+    Features, UI, Persistence) will not compile — but the project-reference graph
+    is still evaluated (so a dependency cycle would fail the build) and every
+    Unity-free assembly compiles. That is the locally-verifiable slice.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Deterministic>true</Deterministic>
+    <!-- Skeleton: stubs throw NotImplementedException; silence doc/unused noise. -->
+    <NoWarn>$(NoWarn);CS1591;CS0067;CS0169;CS0649;CS8618;CS0414</NoWarn>
+
+    <UnityManagedDir  Condition="'$(UnityManagedDir)'  == ''">__UNITY_MANAGED_DIR_NOT_SET__</UnityManagedDir>
+    <UnityPackagesDir Condition="'$(UnityPackagesDir)' == ''">__UNITY_PACKAGES_DIR_NOT_SET__</UnityPackagesDir>
+    <SteamVrDir       Condition="'$(SteamVrDir)'       == ''">__STEAMVR_DIR_NOT_SET__</SteamVrDir>
+  </PropertyGroup>
+
+  <!-- init-accessor polyfill compiled into every assembly (see Shims/IsExternalInit.cs). -->
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Shims/IsExternalInit.cs" />
+  </ItemGroup>
+
+  <!-- Third-party managed references, switched on per-project via the Uses* flags. -->
+  <ItemGroup Condition="'$(UsesUnity)' == 'true'">
+    <Reference Include="UnityEngine">            <HintPath>$(UnityManagedDir)\UnityEngine.dll</HintPath>            <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"> <HintPath>$(UnityManagedDir)\UnityEngine.CoreModule.dll</HintPath> <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(UnityManagedDir)\UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsesUnityUI)' == 'true'">
+    <Reference Include="UnityEngine.UIModule">         <HintPath>$(UnityManagedDir)\UnityEngine.UIModule.dll</HintPath>         <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI">               <HintPath>$(UnityManagedDir)\UnityEngine.UI.dll</HintPath>               <Private>false</Private></Reference>
+    <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(UnityManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsesTmpro)' == 'true'">
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(UnityPackagesDir)\Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsesSteamVR)' == 'true'">
+    <Reference Include="Valve.VR">                  <HintPath>$(SteamVrDir)\Valve.VR.dll</HintPath>                  <Private>false</Private></Reference>
+    <Reference Include="Valve.VR.InteractionSystem"><HintPath>$(SteamVrDir)\Valve.VR.InteractionSystem.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
