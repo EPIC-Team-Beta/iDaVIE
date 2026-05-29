@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    ST5 driven-port surface. Added during this build to dissolve the
+    Data <-> Features dependency cycle: the ports ST2 adapters realise
+    (ISourceStatsProvider, IDataAnalysisPlugin, IFitsBinaryTableSource) plus the
+    DTOs in their signatures (SourceStats, FeatureColumnInfo, FeatureTable) live
+    here so iDaVIE.Data can implement them without referencing the full
+    iDaVIE.Features domain assembly. References only Kernel.Contracts.Types.
+  -->
+  <ItemGroup>
+    <Compile Include="../Features/Contracts/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+  </ItemGroup>
+</Project>

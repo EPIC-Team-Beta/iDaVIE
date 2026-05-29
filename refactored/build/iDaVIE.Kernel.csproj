@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST1 kernel implementation. Config, composition root, plugin registry,
+       delegates, log sink. Top of ST1; depended on by no other team. -->
+  <ItemGroup>
+    <Compile Include="../Kernel/*.cs" Exclude="../Kernel/BoundaryValueTypes.cs;../Kernel/Delegates.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+  </ItemGroup>
+</Project>

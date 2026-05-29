@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST3 contracts (no outbound team references). MaskMode, IRenderSettings, etc. -->
+  <ItemGroup>
+    <Compile Include="../Rendering/Contracts/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+  </ItemGroup>
+</Project>

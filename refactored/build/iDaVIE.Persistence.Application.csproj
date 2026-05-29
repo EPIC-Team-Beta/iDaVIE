@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST7 persistence application (ValidationAndRecoveryService). -->
+  <ItemGroup>
+    <Compile Include="../Persistence/Application/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Persistence.Domain.csproj" />
+  </ItemGroup>
+</Project>

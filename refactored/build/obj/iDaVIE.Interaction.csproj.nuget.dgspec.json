@@ -1,0 +1,619 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Interaction.csproj": {}
+  },
+  "projects": {
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.Contracts.csproj",
+        "projectName": "iDaVIE.Data.Contracts",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.Contracts.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj",
+        "projectName": "iDaVIE.Data",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj",
+        "projectName": "iDaVIE.Features.Contracts",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.csproj",
+        "projectName": "iDaVIE.Features",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "dependencies": {
+            "System.Text.Json": {
+              "target": "Package",
+              "version": "[8.0.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Interaction.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Interaction.csproj",
+        "projectName": "iDaVIE.Interaction",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Interaction.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Data.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Features.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj",
+        "projectName": "iDaVIE.Kernel.Contracts.Plugins",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj",
+        "projectName": "iDaVIE.Kernel.Contracts.Types",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj",
+        "projectName": "iDaVIE.Kernel.Contracts",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Plugins.csproj"
+              },
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj",
+        "projectName": "iDaVIE.Rendering.Contracts",
+        "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Rendering.Contracts.csproj",
+        "packagesPath": "/home/me/.nuget/packages/",
+        "outputPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/me/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj": {
+                "projectPath": "/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/iDaVIE.Kernel.Contracts.Types.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST4 interaction (FSMs, voice/controller/keypad adapters). UnityEngine + TMPro + SteamVR. -->
+  <PropertyGroup>
+    <UsesUnity>true</UsesUnity>
+    <UsesUnityUI>true</UsesUnityUI>
+    <UsesTmpro>true</UsesTmpro>
+    <UsesSteamVR>true</UsesSteamVR>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Interaction/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.Data.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Features.csproj" />
+  </ItemGroup>
+</Project>

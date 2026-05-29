@@ -1,0 +1,10 @@
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.UI.Contracts.deps.json
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.UI.Contracts.dll
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.UI.Contracts.pdb
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.AssemblyInfoInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.AssemblyInfo.cs
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.csproj.CoreCompileInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.sourcelink.json
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.dll
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.UI.Contracts.pdb

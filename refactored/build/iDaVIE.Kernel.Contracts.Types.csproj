@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST1. Boundary value types (no outbound team references — the graph floor). -->
+  <ItemGroup>
+    <Compile Include="../Kernel/BoundaryValueTypes.cs" />
+  </ItemGroup>
+</Project>

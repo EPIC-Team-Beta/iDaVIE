@@ -1,0 +1,6 @@
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.csproj.AssemblyReference.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.GeneratedMSBuildEditorConfig.editorconfig
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.AssemblyInfoInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.AssemblyInfo.cs
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.csproj.CoreCompileInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Features.sourcelink.json

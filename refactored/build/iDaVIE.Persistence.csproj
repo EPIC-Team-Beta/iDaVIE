@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST7 persistence (composition root, workspace service/repository/envelope,
+       menu controller). Top of the acyclic graph; no team depends on it.
+       PersistenceMenuController is UnityEngine-dependent. -->
+  <PropertyGroup>
+    <UsesUnity>true</UsesUnity>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Persistence/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Data.csproj" />
+    <ProjectReference Include="iDaVIE.Data.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Features.csproj" />
+    <ProjectReference Include="iDaVIE.Interaction.csproj" />
+    <ProjectReference Include="iDaVIE.UI.csproj" />
+    <ProjectReference Include="iDaVIE.UI.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Persistence.Domain.csproj" />
+    <ProjectReference Include="iDaVIE.Persistence.Application.csproj" />
+  </ItemGroup>
+</Project>

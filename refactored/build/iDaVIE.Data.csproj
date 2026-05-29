@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST2 data I/O plug-ins. Unity-free (System.Numerics only). Includes the
+       ICoordinateTransformer reference stub. -->
+  <ItemGroup>
+    <Compile Include="../Data/*.cs" />
+    <Compile Include="../External/ICoordinateTransformer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Plugins.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.Data.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Features.Contracts.csproj" />
+  </ItemGroup>
+</Project>

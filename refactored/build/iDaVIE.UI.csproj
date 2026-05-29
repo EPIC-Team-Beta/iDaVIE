@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST6 desktop GUI (ViewModels, shells, menu controllers). UnityEngine + UI + TMPro + System.Numerics. -->
+  <PropertyGroup>
+    <UsesUnity>true</UsesUnity>
+    <UsesUnityUI>true</UsesUnityUI>
+    <UsesTmpro>true</UsesTmpro>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../UI/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Plugins.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.UI.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Data.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Interaction.csproj" />
+    <ProjectReference Include="iDaVIE.Features.csproj" />
+  </ItemGroup>
+</Project>

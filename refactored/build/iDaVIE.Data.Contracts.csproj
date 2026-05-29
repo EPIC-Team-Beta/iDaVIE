@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST2 contracts. IBrushStrokeHistory, IMaskStateCapture. -->
+  <ItemGroup>
+    <Compile Include="../Data/Contracts/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+  </ItemGroup>
+</Project>

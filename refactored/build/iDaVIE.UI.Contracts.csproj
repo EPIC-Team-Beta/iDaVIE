@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST6 contracts. IDesktopStateCapture + DesktopStateDto (no outbound team references). -->
+  <ItemGroup>
+    <Compile Include="../UI/Contracts/**/*.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.deps.json
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.dll
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.pdb
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/bin/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Types.pdb
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.csproj.AssemblyReference.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.GeneratedMSBuildEditorConfig.editorconfig
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.AssemblyInfoInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.AssemblyInfo.cs
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.csproj.CoreCompileInputs.cache
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.sourcelink.json
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.K.E3BF0B13.Up2Date
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.dll
+/home/me/ISE/iDaVIE/iDaVIE_refactor/refactored/build/obj/Debug/netstandard2.1/iDaVIE.Kernel.Contracts.Plugins.pdb

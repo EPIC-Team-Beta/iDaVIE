@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST5 feature domain + application + ACL. UnityEngine-dependent (visualisers);
+       FeatureImportService uses System.Text.Json (not shipped by Unity). -->
+  <PropertyGroup>
+    <UsesUnity>true</UsesUnity>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Features/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.Features.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Data.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+  </ItemGroup>
+</Project>

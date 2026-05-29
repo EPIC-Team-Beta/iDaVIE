@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST1 cross-team contracts (kernel floor). Includes the relocated workspace
+       command ports (IWorkspaceCommands.cs) and the IVolumeDataSet reference stub. -->
+  <ItemGroup>
+    <Compile Include="../Kernel/Contracts/**/*.cs" Exclude="../Kernel/Contracts/Plugins/**/*.cs" />
+    <Compile Include="../External/IVolumeDataSet.cs" />
+    <!-- Delegates.cs (namespace iDaVIE.Kernel) is consumed by IVolumeLoader and other
+         contracts; compiled here (not in iDaVIE.Kernel) so the contracts assembly does
+         not depend on its implementation assembly. Deviates from README map row. -->
+    <Compile Include="../Kernel/Delegates.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Plugins.csproj" />
+  </ItemGroup>
+</Project>

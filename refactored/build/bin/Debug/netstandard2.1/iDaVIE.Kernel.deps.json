@@ -1,0 +1,67 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.1/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.1": {},
+    ".NETStandard,Version=v2.1/": {
+      "iDaVIE.Kernel/1.0.0": {
+        "dependencies": {
+          "iDaVIE.Kernel.Contracts.Types": "1.0.0",
+          "iDaVIE.Kernel.Contracts": "1.0.0.0"
+        },
+        "runtime": {
+          "iDaVIE.Kernel.dll": {}
+        }
+      },
+      "iDaVIE.Kernel.Contracts.Types/1.0.0": {
+        "runtime": {
+          "iDaVIE.Kernel.Contracts.Types.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "iDaVIE.Kernel.Contracts/1.0.0.0": {
+        "runtime": {
+          "iDaVIE.Kernel.Contracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "iDaVIE.Kernel.Contracts.Plugins/1.0.0.0": {
+        "runtime": {
+          "iDaVIE.Kernel.Contracts.Plugins.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "iDaVIE.Kernel/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "iDaVIE.Kernel.Contracts.Types/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "iDaVIE.Kernel.Contracts/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "iDaVIE.Kernel.Contracts.Plugins/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

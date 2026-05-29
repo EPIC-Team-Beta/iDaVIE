@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST3 rendering engine. UnityEngine-dependent. -->
+  <PropertyGroup>
+    <UsesUnity>true</UsesUnity>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Rendering/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Plugins.csproj" />
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Data.csproj" />
+    <ProjectReference Include="iDaVIE.Data.Contracts.csproj" />
+  </ItemGroup>
+</Project>

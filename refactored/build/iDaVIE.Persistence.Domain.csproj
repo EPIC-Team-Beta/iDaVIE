@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST7 persistence domain (StoredState, StateIndex, migration/integrity records). -->
+  <ItemGroup>
+    <Compile Include="../Persistence/Domain/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Data.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Rendering.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.UI.Contracts.csproj" />
+    <ProjectReference Include="iDaVIE.Features.csproj" />
+    <ProjectReference Include="iDaVIE.Interaction.csproj" />
+  </ItemGroup>
+</Project>

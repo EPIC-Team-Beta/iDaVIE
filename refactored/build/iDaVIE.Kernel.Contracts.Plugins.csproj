@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ST1. Plug-in ABI ports. -->
+  <ItemGroup>
+    <Compile Include="../Kernel/Contracts/Plugins/**/*.cs" />
+    <Compile Include="../External/IRawVoxelAccess.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="iDaVIE.Kernel.Contracts.Types.csproj" />
+  </ItemGroup>
+</Project>
