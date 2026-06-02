@@ -4,18 +4,18 @@
  *
  * This file is part of the iDaVIE project.
  *
- * iDaVIE is free software: you can redistribute it and/or modify it under the terms 
- * of the GNU Lesser General Public License (LGPL) as published by the Free Software 
+ * iDaVIE is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License (LGPL) as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * iDaVIE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * iDaVIE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  * PURPOSE. See the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with 
+ * You should have received a copy of the GNU Lesser General Public License along with
  * iDaVIE in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
  *
- * Additional information and disclaimers regarding liability and third-party 
+ * Additional information and disclaimers regarding liability and third-party
  * components can be found in the DISCLAIMER and NOTICE files included with this project.
  *
  */
@@ -41,7 +41,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     private VolumeDataSet maskSet;  //mask
     private Texture3D regionCube;  //texture3D cube of texture rfloat (used to set greyscale)
     private Texture2D currentRegionSlice;  //to find the coordinates of the selection
-    private float[,] currentMaskSlice;  
+    private float[,] currentMaskSlice;
     private Texture3D maskCube;  //texture3d cube of texture r16 (value of mask i think)
     //Actual VolumeDataSet mask cube - for writing mask
     public Dictionary<int, DataAnalysis.SourceStats> SourceStatsDict { get; private set; }
@@ -56,7 +56,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     private CameraTransform cameraZ = new CameraTransform();
 
     public Text sliceText;  //the text displaying the current slice
-    private RawImage rawImage;  
+    private RawImage rawImage;
     private int prevIndex = 0;
     private CanvassDesktop canvassDesktop;  //could be changed to public
     public GameObject colorMapDropdown;
@@ -66,6 +66,13 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     public GameObject subtractiveToggle;
     private Image selectionModeImage;
     private Image selectionModeImage2;
+
+    // Cached components — populated once in StartPaintSelection() to avoid per-frame GetComponent calls.
+    private Slider _sliceSliderComp;
+    private TMP_Dropdown _colorMapDropdownComp;
+    private TMP_Dropdown _axisDropdownComp;
+    private Toggle _additiveToggleComp;
+    private Toggle _subtractiveToggleComp;
 
     private int axis;  //x = 0, y = 1, z = 0
     private int sliceIndex;  //of the region cube
@@ -133,6 +140,13 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         if (imageRect == null)
             imageRect = GetComponent<RectTransform>();
 
+        // Cache UI components once to avoid repeated GetComponent calls.
+        _sliceSliderComp = sliceSlider.GetComponent<Slider>();
+        _colorMapDropdownComp = colorMapDropdown.GetComponent<TMP_Dropdown>();
+        _axisDropdownComp = axisDropdown.GetComponent<TMP_Dropdown>();
+        _additiveToggleComp = additiveToggle.GetComponent<Toggle>();
+        _subtractiveToggleComp = subtractiveToggle.GetComponent<Toggle>();
+
         originalUVRect = rawImage.uvRect;
 
         dataRenderer = canvassDesktop.GetFirstActiveRenderer();
@@ -140,9 +154,9 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         dataSet = dataRenderer.Data;
         regionCube = dataSet.RegionCube;
 
-        var effectiveMin = dataRenderer.ScaleMin + dataRenderer.ThresholdMin 
+        var effectiveMin = dataRenderer.ScaleMin + dataRenderer.ThresholdMin
                 * (dataRenderer.ScaleMax - dataRenderer.ScaleMin);
-        var effectiveMax = dataRenderer.ScaleMin + dataRenderer.ThresholdMax 
+        var effectiveMax = dataRenderer.ScaleMin + dataRenderer.ThresholdMax
                 * (dataRenderer.ScaleMax - dataRenderer.ScaleMin);
 
         maxVal = effectiveMax;
@@ -188,7 +202,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
     void Update()
     {
-        sliceIndex = (int)sliceSlider.GetComponent<Slider>().value;
+        sliceIndex = (int)_sliceSliderComp.value;
         if(maskCount > 0) clearAllButton.interactable = true;
         else clearAllButton.interactable = false;
 
@@ -240,19 +254,19 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         if(Input.GetKeyDown(KeyCode.X))
         {
             ChangeAxis(0);
-            axisDropdown.GetComponent<TMP_Dropdown>().value = 0;
+            _axisDropdownComp.value = 0;
         }
 
         if(Input.GetKeyDown(KeyCode.Y))
         {
             ChangeAxis(1);
-            axisDropdown.GetComponent<TMP_Dropdown>().value = 1;
+            _axisDropdownComp.value = 1;
         }
 
         if(Input.GetKeyDown(KeyCode.Z))
         {
             ChangeAxis(2);
-            axisDropdown.GetComponent<TMP_Dropdown>().value = 2;
+            _axisDropdownComp.value = 2;
         }
 
         //Used to manage zoom functionality
@@ -292,8 +306,8 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
             rawImage.uvRect = new Rect(newX, newY, newWidth, newHeight);
         }
 
-        if(ColorMapUtils.FromHashCode(colorMapDropdown.GetComponent<TMP_Dropdown>().value) != colorMapEnum) {
-            colorMapDropdown.GetComponent<TMP_Dropdown>().value = (int)colorMapEnum;
+        if(ColorMapUtils.FromHashCode(_colorMapDropdownComp.value) != colorMapEnum) {
+            _colorMapDropdownComp.value = (int)colorMapEnum;
         }
 
     }
@@ -303,7 +317,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     }
 
     public void UpdateMaxValue(float value) {
-        minVal = value;
+        maxVal = value;
     }
 
     private void OnDropDownFieldValueChanged(int index)
@@ -335,7 +349,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     {
         Destroy(sliceIndicator);
         Destroy(sliceCamera);
-        sliceSlider?.GetComponent<Slider>().SetValueWithoutNotify(0);
+        _sliceSliderComp?.SetValueWithoutNotify(0);
     }
 
 
@@ -378,179 +392,14 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     //return the slice from a texture3d based on the selected axis and index
     public Texture2D GetSlice(Texture3D texture3D, int axis, int sliceIndex)
     {
-        if (texture3D == null)
-        {
-            Debug.LogWarning("GetSlice called with null Texture3D");
-            return null;
-        }
-
-        int width = texture3D.width;
-        int height = texture3D.height;
-        int depth = texture3D.depth;
-
-        // Ensure the slice index is within the valid range
-        if (sliceIndex < 0 || (axis == 0 && sliceIndex >= width) || (axis == 1 && sliceIndex >= height) || (axis == 2 && sliceIndex >= depth))
-        {
-            Debug.LogError("Slice index out of range");
-            return null;
-        }
-
-        // Read the entire 3D texture data into a NativeArray<float>
-        NativeArray<float> volumeData = texture3D.GetPixelData<float>(0);
-        //Debug.Log("Native array (region) size: " + volumeData.Length);
-
-        // Create the output texture
-        Texture2D slice;;
-        Color[] sliceData;
-        int size;
-        int indexMap = 80 - colorMapEnum.GetHashCode();
-
-        switch (axis)
-        {
-            case 0: // x-axis
-                slice = new Texture2D(height, depth, TextureFormat.RGBA32, false);
-                size = height*depth;
-                sliceData = new Color[size];
-                for (int y = 0; y < height; y++)
-                {
-                    for (int z = 0; z < depth; z++)
-                    {
-                        int index = sliceIndex + y * width + z * width * height;
-                        float normalizedData = (volumeData[index] - minVal)/(maxVal - minVal);
-                        //Color rgbColor = new Color(normalizedData, normalizedData, normalizedData);
-                        //Debug.Log("The normalized value is: " + normalizedData);
-                        Color rgbColor = GetColorFromColormap(indexMap, normalizedData); //colorMapEnum.GetHashCode(), normalizedData
-                        sliceData[y + z * height] = rgbColor;
-                    }
-                }
-                break;
-            
-            case 1: // y-axis
-                slice = new Texture2D(width, depth, TextureFormat.RGBA32, false);
-                size = width * depth;
-                sliceData = new Color[size];
-                for (int x = 0; x < width; x++)
-                {
-                    for (int z = 0; z < depth; z++)
-                    {
-                        int index = x + sliceIndex * width + z * width * height;
-                        float normalizedData = (volumeData[index] - minVal)/(maxVal - minVal);
-                        //Color rgbColor = new Color(normalizedData, normalizedData, normalizedData);
-                        Color rgbColor = GetColorFromColormap(indexMap, normalizedData);
-                        sliceData[x + z * width] = rgbColor;
-                    }
-                }
-                break;
-
-            case 2: // z-axis
-                slice = new Texture2D(width, height, TextureFormat.RGBA32, false);
-                size = width * height;
-                sliceData = new Color[size];
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        int index = x + y * width + sliceIndex * width * height;
-                        float normalizedData = (volumeData[index] - minVal)/(maxVal - minVal);
-                        //Color rgbColor = new Color(normalizedData, normalizedData, normalizedData);
-                        Color rgbColor = GetColorFromColormap(indexMap, normalizedData);
-                        sliceData[x + y * width] = rgbColor;
-                    }
-                }
-                break;
-            
-            default:
-                Debug.LogError("Invalid axis specified. Use 0 for x-axis, 1 for y-axis, and 2 for z-axis.");
-                return null;
-        }
-
-        // Dispose of the NativeArray to avoid memory leaks
-        volumeData.Dispose();
-
-        // Apply the pixel data to the slice texture
-        slice.SetPixels(sliceData, 0);
-    
-        // Dispose of the sliceData NativeArray
-        //sliceData.Dispose();
-
-        // Apply the changes to the Texture2D
-        slice.Apply();
-
-        return slice;
+        return PaintSliceTextureHelper.GetSlice(texture3D, axis, sliceIndex,
+            minVal, maxVal, colorMapEnum, colormap, colormapWidth, colorMapRowHeight);
     }
 
     //Get pixel values of a slice
     public float[,] GetFloatSlice(Texture3D texture3D, int axis, int sliceIndex)
     {
-        if (texture3D == null)
-        {
-            Debug.LogWarning("GetFloatSlice called with null Texture3D");
-            return null;
-        }
-
-        int width = texture3D.width;
-        int height = texture3D.height;
-        int depth = texture3D.depth;
-
-        // Ensure the slice index is within the valid range
-        if (sliceIndex < 0 || (axis == 0 && sliceIndex >= width) || (axis == 1 && sliceIndex >= height) || (axis == 2 && sliceIndex >= depth))
-        {
-            Debug.LogError("Slice index out of range");
-            return null;
-        }
-
-        // Read the entire 3D texture data into a NativeArray<Half> for r16 format
-        NativeArray<half> volumeData = texture3D.GetPixelData<half>(0);
-
-        float[,] sliceData;
-
-        switch (axis)
-        {
-            case 0: // x-axis
-                sliceData = new float[height, depth];
-                for (int y = 0; y < height; y++)
-                {
-                    for (int z = 0; z < depth; z++)
-                    {
-                        int index = sliceIndex + y * width + z * width * height;
-                        sliceData[y, z] = (float)volumeData[index];
-                    }
-                }
-                break;
-
-            case 1: // y-axis
-                sliceData = new float[width, depth];
-                for (int x = 0; x < width; x++)
-                {
-                    for (int z = 0; z < depth; z++)
-                    {
-                        int index = x + sliceIndex * width + z * width * height;
-                        sliceData[x, z] = (float)volumeData[index];
-                    }
-                }
-                break;
-
-            case 2: // z-axis
-                sliceData = new float[width, height];
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        int index = x + y * width + sliceIndex * width * height;
-                        sliceData[x, y] = (float)volumeData[index];
-                    }
-                }
-                break;
-
-            default:
-                Debug.LogError("Invalid axis specified. Use 0 for x-axis, 1 for y-axis, and 2 for z-axis.");
-                return null;
-        }
-
-        // Dispose of the NativeArray to avoid memory leaks
-        volumeData.Dispose();
-
-        return sliceData;
+        return PaintSliceTextureHelper.GetFloatSlice(texture3D, axis, sliceIndex);
     }
 
     public void HighlightMask()
@@ -590,129 +439,12 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
         if(maskCount > 0)
         {
-            Texture2D overlayTexture = CreateOverlayTexture(currentRegionSlice, currentMaskSlice, currentRegionSlice.width, currentRegionSlice.height);
+            Texture2D overlayTexture = MaskOverlayBuilder.CreateOverlayTexture(
+                currentRegionSlice, currentMaskSlice,
+                currentRegionSlice.width, currentRegionSlice.height,
+                maskSet, axis, sliceIndex, sourceID);
             currentRegionSlice = overlayTexture;
             rawImage.texture = currentRegionSlice;
-        }
-        
-    }
-
-    Texture2D CreateOverlayTexture(Texture2D baseTexture, float[,] overlaySource, int width, int height)
-    {
-        Texture2D overlayTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-
-        // Initialize the overlay with the base texture
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                Color baseColor = baseTexture.GetPixel(x, y);
-                overlayTexture.SetPixel(x, y, baseColor);
-            }
-        }
-
-        bool[,] visited = new bool[width, height];
-        List<List<Vector2Int>> regions = new List<List<Vector2Int>>();
-
-        // Identify contiguous regions
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if (overlaySource[x, y] > 0 && !visited[x, y])
-                {
-                    List<Vector2Int> region = new List<Vector2Int>();
-                    FindRegion(overlaySource, x, y, visited, region);
-                    regions.Add(region);
-                }
-            }
-        }
-
-        Color maskColor = new Color(0.8018868f, 0.5030705f, 0.5030705f);
-        // Draw outlines and internal grid lines
-        foreach (var region in regions)
-        {
-            DrawOutlineAndGrid(overlayTexture, region, overlaySource, maskColor);
-        }
-
-        overlayTexture.Apply();
-        return overlayTexture;
-    }
-
-    void FindRegion(float[,] texture, int startX, int startY, bool[,] visited, List<Vector2Int> region)
-    {
-        int width = texture.GetLength(0);
-        int height = texture.GetLength(1);
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        queue.Enqueue(new Vector2Int(startX, startY));
-
-        while (queue.Count > 0)
-        {
-            Vector2Int current = queue.Dequeue();
-            int x = current.x;
-            int y = current.y;
-
-            if (x < 0 || x >= width || y < 0 || y >= height || visited[x, y] || texture[x, y] <= 0)
-                continue;
-
-            visited[x, y] = true;
-            region.Add(current);
-
-            queue.Enqueue(new Vector2Int(x + 1, y));
-            queue.Enqueue(new Vector2Int(x - 1, y));
-            queue.Enqueue(new Vector2Int(x, y + 1));
-            queue.Enqueue(new Vector2Int(x, y - 1));
-        }
-    }
-
-    void DrawOutlineAndGrid(Texture2D texture, List<Vector2Int> region, float[,] overlaySource, Color color)
-    {
-        int width = texture.width;
-        int height = texture.height;
-        HashSet<Vector2Int> borderPixels = new HashSet<Vector2Int>();
-        Color currentSourceColor = Color.yellow;
-
-        foreach (var pixel in region)
-        {
-            int x = pixel.x;
-            int y = pixel.y;
-
-            bool isBorder = false;
-
-            if (x > 0 && overlaySource[x - 1, y] == 0) isBorder = true;
-            if (x < width - 1 && overlaySource[x + 1, y] == 0) isBorder = true;
-            if (y > 0 && overlaySource[x, y - 1] == 0) isBorder = true;
-            if (y < height - 1 && overlaySource[x, y + 1] == 0) isBorder = true;
-
-            if (isBorder)
-            {
-                borderPixels.Add(pixel);
-            }
-        }
-
-        foreach (var pixel in borderPixels)
-        {
-            if(axis == 0) //x axis
-            {
-                if(maskSet.GetMaskValue2(sliceIndex,pixel.x,pixel.y) == sourceID) {
-                    color = currentSourceColor;
-                } 
-            }
-
-            if(axis == 1)
-            {
-                if(maskSet.GetMaskValue2(pixel.x,sliceIndex,pixel.y) == sourceID) {
-                    color = currentSourceColor;
-                } 
-            }
-
-            if(axis == 2)
-            {
-                if(maskSet.GetMaskValue2(pixel.x,pixel.y,sliceIndex) == sourceID){
-                    color = currentSourceColor;
-                } 
-            }
-            texture.SetPixel(pixel.x, pixel.y, color);
         }
 
     }
@@ -729,7 +461,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                 {
                     if(axis == 0) //x axis
                     {
-                        Vector3Int pixel = new Vector3Int(sliceIndex, x, y); //Down the x axis - the actual x = slice, actual y = x, actual z = y 
+                        Vector3Int pixel = new Vector3Int(sliceIndex, x, y); //Down the x axis - the actual x = slice, actual y = x, actual z = y
                         maskSet.PaintMaskVoxel(pixel, maskSet.GetMaskValue2(prevIndex,x,y));  //set to 0 to remove mask
                     }
 
@@ -741,11 +473,11 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
                     if(axis == 2)
                     {
-                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex); 
+                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex);
                         maskSet.PaintMaskVoxel(pixel, maskSet.GetMaskValue2(x,y,prevIndex));
                     }
                 }
-                
+
             }
         }
         maskSet.ConsolidateMaskEntries();
@@ -767,7 +499,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                     {
                         if(maskSet.GetMaskValue2(sliceIndex,x,y) == sourceID) {
                                 currentRegionSlice.SetPixel(x,y,currentSourceColor);
-                        } 
+                        }
                         else currentRegionSlice.SetPixel(x,y,maskColor);
                     }
 
@@ -775,7 +507,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                     {
                         if(maskSet.GetMaskValue2(x,sliceIndex,y) == sourceID) {
                             currentRegionSlice.SetPixel(x,y,currentSourceColor);
-                        } 
+                        }
                         else currentRegionSlice.SetPixel(x,y,maskColor);
                     }
 
@@ -783,11 +515,11 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                     {
                         if(maskSet.GetMaskValue2(x,y,sliceIndex) == sourceID){
                             currentRegionSlice.SetPixel(x,y,currentSourceColor);
-                        } 
+                        }
                         else currentRegionSlice.SetPixel(x,y,maskColor);
                     }
                 }
-                
+
             }
         }
 
@@ -795,30 +527,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
     public Color GetColorFromColormap(int rowIndex, float value)
     {
-        if (colormap == null)
-        {
-            Debug.LogError("Colormap texture is not assigned.");
-            return Color.black;
-        }
-
-        //if (value < 0f || value > 1f)
-        //{
-            //Debug.LogError("Value must be between 0 and 1.");
-         //   return Color.black;
-        //}
-
-        // Calculate the Y-coordinate of the specific row
-        int y = rowIndex * colorMapRowHeight - 1;
-
-        // Calculate the X-coordinate based on the value
-        int x = Mathf.FloorToInt(value * (colormapWidth - 1));
-
-        //Debug.Log("The x value is: " + x);
-
-        // Get the color from the colormap at the calculated coordinates
-        Color color = colormap.GetPixel(x, y);
-
-        return color;
+        return PaintSliceTextureHelper.GetColorFromColormap(colormap, rowIndex, value, colormapWidth, colorMapRowHeight);
     }
 
     public void SpawnCameras()
@@ -830,7 +539,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         axis = 2; //remove after testing
         SetCameraTransforms();
 
-        Transform parentTransform = volumeDatasetManager.transform; 
+        Transform parentTransform = volumeDatasetManager.transform;
         Transform renderedCube = parentTransform.GetChild(0);  //assigns the parent of the object to the datacube
 
         sliceCamera = Instantiate(sliceCameraPrefab, renderedCube);
@@ -851,7 +560,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
     public void SpawnSliceIndicator()
     {
-        Transform parentTransform = volumeDatasetManager.transform; 
+        Transform parentTransform = volumeDatasetManager.transform;
         Transform renderedCube = parentTransform.GetChild(0);  //assigns the parent of the object to the datacube
 
         sliceIndicator = Instantiate(sliceIndicatorPrefab, renderedCube);
@@ -919,7 +628,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         {
             int textureX = Mathf.FloorToInt(uvX * currentRegionSlice.width);
             int textureY = Mathf.FloorToInt(uvY * currentRegionSlice.height);
-            
+
             // Ensure pixel is inside bounds
             textureX = Mathf.Clamp(textureX, 0, currentRegionSlice.width - 1);
             textureY = Mathf.Clamp(textureY, 0, currentRegionSlice.height - 1);
@@ -967,7 +676,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
             ApplyMask(false);
             painted = false;
         }
-        
+
         maskSet.ConsolidateMaskEntries();
 
         ResetSlice();
@@ -991,19 +700,19 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                     if(axis == 0) //x axis
                     {
                         Vector3Int pixel = new Vector3Int(sliceIndex, x, y); //Down the x axis - the actual x = slice, actual y = x, actual z = y
-                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0);  
+                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0);
                     }
 
                     if(axis == 1)
                     {
-                        Vector3Int pixel = new Vector3Int(x, sliceIndex, y); 
-                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0); 
+                        Vector3Int pixel = new Vector3Int(x, sliceIndex, y);
+                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0);
                     }
 
                     if(axis == 2)
                     {
-                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex); 
-                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0); 
+                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex);
+                        if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) == sourceID)  maskSet.PaintMaskVoxel(pixel, 0);
                     }
                     maskCount--;
                 }
@@ -1011,14 +720,14 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         }
         maskSet.ConsolidateMaskEntries();
         ResetSlice();
-        
+
     }
 
     //Make a subtractive selection on the slice, param update is used if the last mask voxels arr needs to be updated
     private void SubtractiveSelection(bool update) {
         if(update) UpdateLastMaskVoxels();
         Debug.Log("Mask Voxel Count (in clear mask button): " + maskVoxels.Count);
-        if(maskVoxels.Count > 0) 
+        if(maskVoxels.Count > 0)
         {
             for(int i = 0; i < maskVoxels.Count; i++)
             {
@@ -1081,7 +790,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     {
         maskVoxels = new List<Vector3Int>();
         UpdateTexture();  //go get the original slice without temp modifications (shading showing where masking would happen)
-        RemoveMarkers();  
+        RemoveMarkers();
         ClearSelectionPoly();
         selectionButton.interactable = false;
         selectionButtonText.text = "Fill \n(Space Bar)";
@@ -1105,7 +814,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         if(selectionPolyList.Count > 10)  //stop the drawing if a polygone has been made (fill polygone is called too early due to first points being so close together)
         {
             isDrawing = false;
-        } 
+        }
 
         if (currentRegionSlice == null || selectionPolyList == null || selectionPolyList.Count < 3)
         {
@@ -1146,7 +855,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                 if (IsPointInPolygon(new Vector2(x, y), selectionPolyList)) {
                     if(axis == 0) //x axis
                     {
-                        Vector3Int pixel = new Vector3Int(sliceIndex, x, y); //Down the x axis - the actual x = slice, actual y = x, actual z = y 
+                        Vector3Int pixel = new Vector3Int(sliceIndex, x, y); //Down the x axis - the actual x = slice, actual y = x, actual z = y
                         if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != sourceID && maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != 0) {
                             incorrectSourceCrossed = true;
                             continue;
@@ -1156,7 +865,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
                     if(axis == 1)
                     {
-                        Vector3Int pixel = new Vector3Int(x, sliceIndex, y); 
+                        Vector3Int pixel = new Vector3Int(x, sliceIndex, y);
                         if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != sourceID && maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != 0) {
                             incorrectSourceCrossed = true;
                             continue;
@@ -1166,7 +875,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
 
                     if(axis == 2)
                     {
-                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex); 
+                        Vector3Int pixel = new Vector3Int(x, y, sliceIndex);
                         if(maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != sourceID && maskSet.GetMaskValue2(pixel.x,pixel.y,pixel.z) != 0) {
                             incorrectSourceCrossed = true;
                             continue;
@@ -1176,7 +885,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
                 }
                 if(selectionPolyList.Contains(new Vector2(x, y)))
                 {
-                    
+
                     currentRegionSlice.SetPixel(x, y, fillColor); //future improvement - make the colour layer separate and combine it witht his layer (so temp mask can be semi transparent)
                     pixelsChanged++;
                 }
@@ -1197,19 +906,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     //Inside out method to see if point is in the polygon
     public bool IsPointInPolygon(Vector2 point, List<Vector2> polygon)
     {
-        int n = polygon.Count;
-        bool inside = false;
-
-        for (int i = 0, j = n - 1; i < n; j = i++)
-        {
-            if (((polygon[i].y > point.y) != (polygon[j].y > point.y)) &&
-                (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x))
-            {
-                inside = !inside;
-            }
-        }
-
-        return inside;
+        return PolygonGeometry.IsPointInPolygon(point, polygon);
     }
 
     //adds a final point to the polygon equal to the first point and calls the check (so the correct logic can occur)
@@ -1225,15 +922,12 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     //if the first and last point are within 5 pixels then close the polygon
     public bool IsPolygonClosed(List<Vector2> points)
     {
-        Vector2 firstPoint = points[0];
-        Vector2 lastPoint = points[points.Count - 1];
-        float distance = Vector2.Distance(firstPoint, lastPoint);
-        return distance < 1f; // if points are the same
+        return PolygonGeometry.IsPolygonClosed(points);
     }
 
     /// <summary>
     /// Updates the <c>maskVoxels</c> list with the coordinates of all voxels in the current mask slice
-    /// that are nonzero (i.e., have a mask applied). 
+    /// that are nonzero (i.e., have a mask applied).
     /// If <paramref name="matchID"/> is true, only voxels whose mask value matches the current <c>sourceID</c> are included.
     /// The voxel coordinates are calculated based on the current axis and slice index.
     /// </summary>
@@ -1241,7 +935,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
     /// If true, only voxels with a mask value equal to <c>sourceID</c> are added to <c>maskVoxels</c>.
     /// If false, all nonzero voxels are added.
     /// </param>
-    /// 
+    ///
     public void UpdateMaskVoxels(bool matchID)
     {
         maskVoxels.Clear();
@@ -1326,7 +1020,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
             }
         }
     }
-    
+
     //clear the polygon selection
     private void ClearSelectionPoly()
     {
@@ -1360,7 +1054,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         }
 
         sliceIndex -= 1;
-        sliceSlider.GetComponent<Slider>().value = sliceIndex;
+        _sliceSliderComp.value = sliceIndex;
         UpdateSourceColours();
         UpdateMaskVoxels(false);
         UpdateLastMaskVoxels();
@@ -1379,7 +1073,7 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
             sliceIndex = 0;
         }
 
-        sliceSlider.GetComponent<Slider>().value = sliceIndex;
+        _sliceSliderComp.value = sliceIndex;
         UpdateSourceColours();
         UpdateMaskVoxels(false);
         UpdateLastMaskVoxels();
@@ -1394,53 +1088,53 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
         sliceIndex = 0;
         prevIndex = 0;
         SetSliceSlider();
-        sliceSlider.GetComponent<Slider>().value = 0;
+        _sliceSliderComp.value = 0;
         ResetSlice();
         ResetCamera();
         ResetSliceIndicator();
     }
-    
+
     //Change the color map
     public void ChangeColorMap()
     {
-        colorMapEnum = ColorMapUtils.FromHashCode(colorMapDropdown.GetComponent<TMP_Dropdown>().value);
+        colorMapEnum = ColorMapUtils.FromHashCode(_colorMapDropdownComp.value);
         dataRenderer.ColorMap = colorMapEnum;
         ResetSlice();
     }
 
     public void SetColorMap()
     {
-        colorMapDropdown.GetComponent<TMP_Dropdown>().options.Clear();
+        _colorMapDropdownComp.options.Clear();
 
         foreach (var colorMap in Enum.GetValues(typeof(ColorMapEnum)))
         {
-            colorMapDropdown.GetComponent<TMP_Dropdown>().options.Add(new TMP_Dropdown.OptionData() { text = colorMap.ToString() });
+            _colorMapDropdownComp.options.Add(new TMP_Dropdown.OptionData() { text = colorMap.ToString() });
         }
 
-        colorMapDropdown.GetComponent<TMP_Dropdown>().value = Config.Instance.defaultColorMap.GetHashCode();
+        _colorMapDropdownComp.value = Config.Instance.defaultColorMap.GetHashCode();
     }
 
     private void SetSliceSlider()
     {
         if(axis == 0)
             {
-                sliceSlider.GetComponent<Slider>().maxValue = cubeWidth - 1;
+                _sliceSliderComp.maxValue = cubeWidth - 1;
             }
 
             if(axis == 1)
             {
-                sliceSlider.GetComponent<Slider>().maxValue = cubeHeight - 1;
+                _sliceSliderComp.maxValue = cubeHeight - 1;
             }
 
             if(axis == 2)
             {
-                sliceSlider.GetComponent<Slider>().maxValue = cubeDepth - 1;
+                _sliceSliderComp.maxValue = cubeDepth - 1;
             }
     }
 
     public void SliceSliderChanged()
     {
-        sliceIndex = (int) sliceSlider.GetComponent<Slider>().value;
+        sliceIndex = (int) _sliceSliderComp.value;
         ResetSlice();
         SliderIndicatorChange();
     }
@@ -1535,15 +1229,15 @@ public class DesktopPaintController : MonoBehaviour, IPointerDownHandler, IPoint
             selectionModeImage.color = Color.gray;
             selectionModeImage2.color = Color.red;
             additive = false;
-            additiveToggle.GetComponent<Toggle>().interactable = true;
-            subtractiveToggle.GetComponent<Toggle>().interactable = false;
+            _additiveToggleComp.interactable = true;
+            _subtractiveToggleComp.interactable = false;
         }
         else {
             selectionModeImage2.color = Color.gray;
             selectionModeImage.color = Color.green;
             additive = true;
-            additiveToggle.GetComponent<Toggle>().interactable = false;
-            subtractiveToggle.GetComponent<Toggle>().interactable = true;
+            _additiveToggleComp.interactable = false;
+            _subtractiveToggleComp.interactable = true;
         }
     }
 
