@@ -9,7 +9,6 @@
 
 using UnityEngine;
 using iDaVIE.Kernel.Contracts;          // IDesktopShell, PanelHandle
-using iDaVIE.UI.Contracts;              // IDesktopStateCapture, DesktopStateDto
 
 namespace iDaVIE.UI
 {

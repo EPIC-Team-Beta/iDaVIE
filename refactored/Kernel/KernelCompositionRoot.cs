@@ -7,7 +7,6 @@
 // application start-up after Unity's scene graph is loaded.
 
 using iDaVIE.Data;
-using iDaVIE.Data.Contracts;
 using iDaVIE.Features;
 using iDaVIE.Kernel.Contracts;
 using iDaVIE.Kernel.Contracts.Plugins;

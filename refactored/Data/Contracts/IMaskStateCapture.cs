@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using iDaVIE.Kernel.Contracts.Types;
 
-namespace iDaVIE.Data.Contracts
+namespace iDaVIE.Data
 {
     /// <summary>RLE-encoded mask buffer per ST2's persistence design
     /// (shared_interfaces.md §2.1).</summary>

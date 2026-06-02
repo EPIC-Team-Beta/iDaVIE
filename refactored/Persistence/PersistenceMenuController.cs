@@ -105,9 +105,11 @@ namespace iDaVIE.Persistence
 
         private void MountPanels()
         {
-            // TODO: mount via IDesktopShell once cast-token type is agreed (IR-01).
-            // _shell?.MountPanel(_saveDialogPanelId, saveDialogGameObject);
-            // _shell?.MountPanel(_loadDialogPanelId, loadDialogGameObject);
+            // TODO: wire via IDesktopShell.RegisterPanel once Unity cast-token is agreed (IR-01).
+            // _shell?.RegisterPanel(_saveDialogPanelId, "Save Workspace",
+            //     PanelPlacement.Floating, host => { /* mount save dialog into host */ }, () => { });
+            // _shell?.RegisterPanel(_loadDialogPanelId, "Load Workspace",
+            //     PanelPlacement.Floating, host => { /* mount load dialog into host */ }, () => { });
         }
 
         private void RefreshStateList()

@@ -1,31 +1,25 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// WorkspaceRepository — disk I/O for workspace envelopes and the state index.
+// WorkspaceRepository — disk I/O for workspace state and the state index.
 // ST7-internal infrastructure; nothing here crosses the cross-team boundary.
 //
-// Legacy: no equivalent exists. VolumeDataSet.SaveMask (line ~1380) writes a
-// single FITS file via FitsReader.UpdateMaskInFitsFile; there is no JSON
-// serialisation, no index, and no integrity check anywhere in the codebase.
+// Each saved state occupies its own GUID-named sub-directory containing
+// workspace.json + integrity.sha256, so concurrent saves never collide and
+// a corrupted file does not affect other states.
 //
-// Refactor delta:
-//   - SRP: this class owns only the on-disk format (directory layout, JSON
-//     serialisation, SHA-256 integrity). Orchestration lives in WorkspaceService.
-//   - Each saved state occupies its own GUID-named sub-directory containing
-//     workspace.json + integrity.sha256, so concurrent saves never collide and
-//     a corrupted file does not affect other states.
-//   - Integrity check (SHA-256 of the JSON text) satisfies INV-7.2: a failed
-//     check returns null rather than partially restoring corrupt state.
-//   - In-memory index cache (_indexCache) avoids repeated disk reads; the cache
-//     is invalidated on every Save/Delete so it stays consistent.
-//   - MaxSavedWorkspaces enforcement (INV-7.4) is handled here so WorkspaceService
-//     never needs to know about the file-system layout.
-//   - Serialisation uses Valve.Newtonsoft.Json (existing project dependency via
-//     Config loading) — no new package required. Stub bodies marked TODO are
-//     replaced with JsonConvert.SerializeObject / DeserializeObject calls.
+// Integrity check (SHA-256 of the JSON text) satisfies INV-7.2: a failed
+// check returns null rather than partially restoring corrupt state.
+//
+// In-memory index cache (_indexCache) avoids repeated disk reads; the cache
+// is invalidated on every Save/Delete so it stays consistent.
+//
+// MaxSavedWorkspaces enforcement (INV-7.4) is handled here so WorkspaceService
+// never needs to know about the file-system layout.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using iDaVIE.Kernel.Contracts;      // Config, ILogSink
+using iDaVIE.Kernel.Contracts;          // Config, ILogSink
+using iDaVIE.Persistence.Domain;
 
 namespace iDaVIE.Persistence.Internal
 {
@@ -34,7 +28,6 @@ namespace iDaVIE.Persistence.Internal
         private readonly Config   _config;
         private readonly ILogSink _log;
 
-        // In-memory index; loaded lazily on first access, kept in sync after that.
         private List<SavedStateInfo>? _indexCache;
 
         private string RootPath  => _config.PersistenceRootPath;
@@ -48,41 +41,39 @@ namespace iDaVIE.Persistence.Internal
 
         // ── Save ──────────────────────────────────────────────────────────────
 
-        public void Save(WorkspaceEnvelope envelope)
+        public void Save(StoredState state)
         {
             EnsureRoot();
 
-            var stateDir = Path.Combine(RootPath, envelope.StateId);
+            var stateDir = Path.Combine(RootPath, state.StateId);
             Directory.CreateDirectory(stateDir);
 
             var jsonPath = Path.Combine(stateDir, "workspace.json");
             var hashPath = Path.Combine(stateDir, "integrity.sha256");
 
-            // TODO: replace stub with JsonConvert.SerializeObject(envelope, Formatting.Indented)
-            var json = SerialiseEnvelope(envelope);
+            var json = SerialiseState(state);
 
             File.WriteAllText(jsonPath, json, System.Text.Encoding.UTF8);
             File.WriteAllText(hashPath, ComputeSha256(json), System.Text.Encoding.ASCII);
 
             _log.LogInfo(nameof(WorkspaceRepository),
-                $"Saved: stateId={envelope.StateId} path={jsonPath}");
+                $"Saved: stateId={state.StateId} path={jsonPath}");
 
-            AddToIndex(envelope);
+            AddToIndex(state);
             EnforceLimit();
         }
 
         // ── Load ──────────────────────────────────────────────────────────────
 
         // Returns null on missing file or failed integrity check (INV-7.2).
-        public WorkspaceEnvelope? Load(string stateId)
+        public StoredState? Load(string stateId)
         {
             var jsonPath = Path.Combine(RootPath, stateId, "workspace.json");
             var hashPath = Path.Combine(RootPath, stateId, "integrity.sha256");
 
             if (!File.Exists(jsonPath))
             {
-                _log.LogWarning(nameof(WorkspaceRepository),
-                    $"Not found: stateId={stateId}");
+                _log.LogWarning(nameof(WorkspaceRepository), $"Not found: stateId={stateId}");
                 return null;
             }
 
@@ -105,15 +96,13 @@ namespace iDaVIE.Persistence.Internal
                     $"No integrity file for stateId={stateId}; skipping check.");
             }
 
-            // TODO: replace stub with JsonConvert.DeserializeObject<WorkspaceEnvelope>(json)
-            return DeserialiseEnvelope(json);
+            return DeserialiseState(json);
         }
 
         // ── Index ─────────────────────────────────────────────────────────────
 
         public IReadOnlyList<SavedStateInfo> GetIndex() => GetOrLoadIndex();
 
-        // Delete is ST7-internal; not on the cross-team IStateIndexQuery surface.
         public void Delete(string stateId)
         {
             var stateDir = Path.Combine(RootPath, stateId);
@@ -135,15 +124,15 @@ namespace iDaVIE.Persistence.Internal
                 Directory.CreateDirectory(RootPath);
         }
 
-        private void AddToIndex(WorkspaceEnvelope envelope)
+        private void AddToIndex(StoredState state)
         {
             var index = GetOrLoadIndex();
-            index.RemoveAll(s => s.StateId == envelope.StateId); // handle re-save
+            index.RemoveAll(s => s.StateId == state.StateId);
             index.Insert(0, new SavedStateInfo
             {
-                StateId     = envelope.StateId,
-                DisplayName = envelope.DisplayName,
-                SavedAtUtc  = envelope.SavedAtUtc,
+                StateId     = state.StateId,
+                DisplayName = state.DisplayName,
+                SavedAtUtc  = state.SavedAtUtc,
             });
             PersistIndex(index);
         }
@@ -167,7 +156,6 @@ namespace iDaVIE.Persistence.Internal
             if (_indexCache != null) return _indexCache;
             if (!File.Exists(IndexPath)) { _indexCache = new(); return _indexCache; }
             var json = File.ReadAllText(IndexPath, System.Text.Encoding.UTF8);
-            // TODO: replace stub with JsonConvert.DeserializeObject<List<SavedStateInfo>>(json)
             _indexCache = DeserialiseIndex(json);
             return _indexCache;
         }
@@ -175,16 +163,15 @@ namespace iDaVIE.Persistence.Internal
         private void PersistIndex(List<SavedStateInfo> index)
         {
             EnsureRoot();
-            // TODO: replace stub with JsonConvert.SerializeObject(index)
             File.WriteAllText(IndexPath, SerialiseIndex(index), System.Text.Encoding.UTF8);
             _indexCache = index;
         }
 
         // Serialisation stubs — replaced with Valve.Newtonsoft.Json calls in production.
-        private static string               SerialiseEnvelope(WorkspaceEnvelope _)    => "{}";
-        private static WorkspaceEnvelope    DeserialiseEnvelope(string _)             => new();
-        private static string               SerialiseIndex(List<SavedStateInfo> _)    => "[]";
-        private static List<SavedStateInfo> DeserialiseIndex(string _)                => new();
+        private static string               SerialiseState(StoredState _)           => "{}";
+        private static StoredState          DeserialiseState(string _)              => new();
+        private static string               SerialiseIndex(List<SavedStateInfo> _)  => "[]";
+        private static List<SavedStateInfo> DeserialiseIndex(string _)              => new();
 
         private static string ComputeSha256(string content)
         {

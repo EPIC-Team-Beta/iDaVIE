@@ -3,28 +3,19 @@
 // Realises IWorkspaceSaveCommand, IWorkspaceLoadCommand, IStateIndexQuery,
 // and IPersistenceEvents (shared_interfaces.md §7).
 //
-// Legacy: no equivalent exists. The closest prior art is the manual sequence a
-// user must perform today to "save" state: File → Save Mask (VolumeDataSet line
-// ~1380), then manually note the FITS path and re-open it next session. Feature
-// sets, render settings, interaction state, and desktop layout are lost on close.
+// SRP: owns save/restore orchestration only. Serialisation lives in
+// WorkspaceRepository; UI notification is via IPersistenceEvents; state
+// capture/restore is delegated to the six injected capture ports.
 //
-// Refactor delta:
-//   - SRP: this class owns only the save/restore orchestration. Serialisation
-//     lives in WorkspaceRepository; UI notification is via IPersistenceEvents;
-//     state capture/restore is delegated to the six injected capture ports.
-//   - DIP: all six capture ports are constructor-injected interfaces — no
-//     Config.Instance, no FindObjectOfType, no static AstTool/FitsReader calls.
-//     Conforms to brief §4.2 constraint 4 (every boundary is an interface).
-//   - OCP: adding a seventh capture port requires one new constructor parameter
-//     and one Capture/Restore call. No switch statements or enums to modify.
-//   - Restore order is ST1 → ST2 → ST3 → ST4 → ST5 → ST6, matching the
-//     acyclic ownership graph (global_model.md §2): volumes must exist before
-//     mask/render/interaction/feature/desktop state can be meaningfully restored.
-//   - ISP trade-off: WorkspaceService realises all four ST7 interfaces on one
-//     class because all four share the WorkspaceRepository instance and the
-//     event-raise logic. Splitting into four classes would require a shared
-//     coordinator — recreating the same coupling at one level up. Documented
-//     trade-off per brief §4.2 constraint 1.
+// DIP: all six capture ports are constructor-injected interfaces.
+//
+// Restore order follows global_model.md §2 acyclic graph (ST1 → ST2 → … → ST6):
+// volumes must exist before mask/render/interaction/feature/desktop can restore.
+//
+// ISP trade-off: WorkspaceService realises all four ST7 interfaces on one class
+// because all four share the WorkspaceRepository instance and the event-raise
+// logic. Splitting into four classes would recreate the same coupling one level
+// up. Documented trade-off per brief §4.2 constraint 1.
 
 using System;
 using System.Collections.Generic;
@@ -34,6 +25,7 @@ using iDaVIE.Features;                          // IFeatureStateCapture (ST5)
 using iDaVIE.Interaction;                       // IInteractionStateCapture (ST4)
 using iDaVIE.Kernel.Contracts;                  // ILogSink
 using iDaVIE.Kernel.Contracts.Persistence;      // IVolumeStateCapture (ST1)
+using iDaVIE.Persistence.Domain;
 using iDaVIE.Persistence.Internal;
 using iDaVIE.Rendering.Contracts;               // IRenderStateCapture (ST3)
 using iDaVIE.UI;                                // IDesktopStateCapture (ST6)
@@ -95,15 +87,11 @@ namespace iDaVIE.Persistence
             try
             {
                 var stateId = Guid.NewGuid().ToString("N");
-                var name    = $"Workspace {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC";
-
-                var envelope = new WorkspaceEnvelope
+                var state = new StoredState
                 {
-                    StateId               = stateId,
-                    DisplayName           = name,
-                    SavedAtUtc            = DateTime.UtcNow,
-                    EnvelopeSchemaVersion = 1,
-                    // Capture each sub-team's state via its injected port.
+                    StateId          = stateId,
+                    DisplayName      = $"Workspace {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC",
+                    SavedAtUtc       = DateTime.UtcNow,
                     VolumeState      = _volumeCapture.Capture(),
                     MaskState        = _maskCapture.Capture(),
                     RenderState      = _renderCapture.Capture(),
@@ -112,9 +100,8 @@ namespace iDaVIE.Persistence
                     DesktopState     = _desktopCapture.Capture(),
                 };
 
-                _repository.Save(envelope);
-                _log.LogInfo(nameof(WorkspaceService),
-                    $"Save completed: stateId={stateId}");
+                _repository.Save(state);
+                _log.LogInfo(nameof(WorkspaceService), $"Save completed: stateId={stateId}");
                 SaveCompleted?.Invoke(stateId);
             }
             catch (Exception ex)
@@ -139,8 +126,8 @@ namespace iDaVIE.Persistence
             _log.LogInfo(nameof(WorkspaceService), $"Load pipeline started: stateId={stateId}");
             try
             {
-                var envelope = _repository.Load(stateId);
-                if (envelope == null)
+                var state = _repository.Load(stateId);
+                if (state == null)
                 {
                     var msg = $"Workspace not found or integrity check failed: stateId={stateId}";
                     _log.LogError(nameof(WorkspaceService), msg);
@@ -148,13 +135,12 @@ namespace iDaVIE.Persistence
                     return;
                 }
 
-                // Restore order follows global_model.md §2 acyclic graph: ST1 first.
-                if (envelope.VolumeState      != null) _volumeCapture.Restore(envelope.VolumeState);
-                if (envelope.MaskState        != null) _maskCapture.Restore(envelope.MaskState);
-                if (envelope.RenderState      != null) _renderCapture.Restore(envelope.RenderState);
-                if (envelope.InteractionState != null) _interactionCapture.Restore(envelope.InteractionState);
-                if (envelope.FeatureState     != null) _featureCapture.Restore(envelope.FeatureState);
-                if (envelope.DesktopState     != null) _desktopCapture.Restore(envelope.DesktopState);
+                if (state.VolumeState      != null) _volumeCapture.Restore(state.VolumeState);
+                if (state.MaskState        != null) _maskCapture.Restore(state.MaskState);
+                if (state.RenderState      != null) _renderCapture.Restore(state.RenderState);
+                if (state.InteractionState != null) _interactionCapture.Restore(state.InteractionState);
+                if (state.FeatureState     != null) _featureCapture.Restore(state.FeatureState);
+                if (state.DesktopState     != null) _desktopCapture.Restore(state.DesktopState);
 
                 _log.LogInfo(nameof(WorkspaceService), $"Load completed: stateId={stateId}");
                 LoadCompleted?.Invoke();

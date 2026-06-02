@@ -1,31 +1,32 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // StoredState — ST7 Domain envelope. Carries state identity + metadata +
-// per-team serialised payloads + integrity record. Immutable once written.
+// per-team serialised payloads. Immutable once constructed; serialised to disk
+// by WorkspaceRepository.
 
 using System;
-using iDaVIE.Data.Contracts;            // MaskStateDto
-using iDaVIE.Features;                  // FeatureStateDto
-using iDaVIE.Interaction;               // InteractionStateDto
-using iDaVIE.Kernel.Contracts.Persistence; // VolumeStateDto
-using iDaVIE.Rendering.Contracts;       // RenderStateDto
-using iDaVIE.UI.Contracts;              // DesktopStateDto
+using iDaVIE.Data;                              // MaskStateDto (ST2)
+using iDaVIE.Features;                          // FeatureStateDto (ST5)
+using iDaVIE.Interaction;                       // InteractionStateDto (ST4)
+using iDaVIE.Kernel.Contracts.Persistence;      // VolumeStateDto (ST1)
+using iDaVIE.Rendering.Contracts;               // RenderStateDto (ST3)
+using iDaVIE.UI;                                // DesktopStateDto (ST6)
 
 namespace iDaVIE.Persistence.Domain
 {
     public sealed class StoredState
     {
-        public string   StateId        { get; init; } = "";
-        public string   Label          { get; init; } = "";
-        public DateTime CreatedAt      { get; init; }
-        public int      SchemaVersion  { get; init; } = 1;
+        public int      SchemaVersion { get; init; } = 1;
+        public string   StateId       { get; init; } = string.Empty;
+        public string   DisplayName   { get; init; } = string.Empty;
+        public DateTime SavedAtUtc    { get; init; }
 
-        public VolumeStateDto      Volume      { get; init; }
-        public MaskStateDto        Mask        { get; init; }
-        public RenderStateDto      Render      { get; init; }
-        public InteractionStateDto Interaction { get; init; }
-        public FeatureStateDto     Features    { get; init; }
-        public DesktopStateDto     Desktop     { get; init; }
-
-        public IntegrityRecord     Integrity   { get; init; }
+        // Per-team capture DTOs. Null if the sub-system had no state at save time;
+        // Restore skips null fields rather than throwing.
+        public VolumeStateDto?      VolumeState      { get; init; }  // ST1
+        public MaskStateDto?        MaskState        { get; init; }  // ST2
+        public RenderStateDto?      RenderState      { get; init; }  // ST3
+        public InteractionStateDto? InteractionState { get; init; }  // ST4
+        public FeatureStateDto?     FeatureState     { get; init; }  // ST5
+        public DesktopStateDto?     DesktopState     { get; init; }  // ST6
     }
 }
