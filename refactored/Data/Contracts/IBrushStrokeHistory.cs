@@ -3,7 +3,7 @@
 // alongside IMaskMutationService. Owns the undo/redo stacks; the legacy
 // BrushStrokeHistory / BrushStrokeRedoQueue lists on VolumeDataSet move here.
 
-namespace iDaVIE.Data
+namespace iDaVIE.Data.Contracts
 {
     public interface IBrushStrokeHistory
     {

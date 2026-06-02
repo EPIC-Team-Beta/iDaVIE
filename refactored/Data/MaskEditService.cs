@@ -10,6 +10,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using iDaVIE.Data.Contracts;
 using iDaVIE.Kernel.Contracts;
 using iDaVIE.Kernel.Contracts.Types;
 using iDaVIE.Rendering.Contracts;          // MaskMode

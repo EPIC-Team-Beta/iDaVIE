@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using iDaVIE.Data;                              // IMaskStateCapture (ST2)
+using iDaVIE.Data.Contracts;                    // IMaskStateCapture (ST2)
 using iDaVIE.Features;                          // IFeatureStateCapture (ST5)
 using iDaVIE.Interaction;                       // IInteractionStateCapture (ST4)
 using iDaVIE.Kernel.Contracts;                  // ILogSink
@@ -28,7 +28,7 @@ using iDaVIE.Kernel.Contracts.Persistence;      // IVolumeStateCapture (ST1)
 using iDaVIE.Persistence.Domain;
 using iDaVIE.Persistence.Internal;
 using iDaVIE.Rendering.Contracts;               // IRenderStateCapture (ST3)
-using iDaVIE.UI;                                // IDesktopStateCapture (ST6)
+using iDaVIE.UI.Contracts;                      // IDesktopStateCapture (ST6)
 
 namespace iDaVIE.Persistence
 {

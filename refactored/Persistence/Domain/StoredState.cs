@@ -4,12 +4,12 @@
 // by WorkspaceRepository.
 
 using System;
-using iDaVIE.Data;                              // MaskStateDto (ST2)
+using iDaVIE.Data.Contracts;                    // MaskStateDto (ST2)
 using iDaVIE.Features;                          // FeatureStateDto (ST5)
 using iDaVIE.Interaction;                       // InteractionStateDto (ST4)
 using iDaVIE.Kernel.Contracts.Persistence;      // VolumeStateDto (ST1)
 using iDaVIE.Rendering.Contracts;               // RenderStateDto (ST3)
-using iDaVIE.UI;                                // DesktopStateDto (ST6)
+using iDaVIE.UI.Contracts;                      // DesktopStateDto (ST6)
 
 namespace iDaVIE.Persistence.Domain
 {

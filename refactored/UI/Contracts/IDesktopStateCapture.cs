@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace iDaVIE.UI
+namespace iDaVIE.UI.Contracts
 {
     public sealed class DesktopStateDto
     {
