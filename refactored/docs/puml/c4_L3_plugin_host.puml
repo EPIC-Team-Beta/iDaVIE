@@ -1,0 +1,52 @@
+@startuml c4_L3_plugin_host
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title C4 Level 3 — Plug-in Host Components  [iDaVIE.Infrastructure / Plug-in Host]
+
+Container_Boundary(host, "Plug-in Host  [iDaVIE.Infrastructure]") {
+
+    Component(loader, "PluginLoader", "C# class", "Loads shared libraries from disk\nusing dlopen() (Linux/macOS) or\nLoadLibrary() (Windows).\nResolves idv_plugin_entry symbol.")
+
+    Component(manifest_validator, "ManifestValidator", "C# class", "Validates idv_plugin_manifest_t:\nstruct_size field check,\nnon-null plugin_name,\nnon-empty capabilities array.")
+
+    Component(version_negotiator, "VersionNegotiator", "C# class", "Checks contract_version.major\nagainst IDV_HOST_SUPPORTED_MAJORS.\nChecks contract_version.minor ≤\nIDV_CONTRACT_MINOR_CURRENT.\nRejects on ABI version mismatch.")
+
+    Component(capability_binder, "CapabilityBinder", "C# class", "Iterates advertised capability IDs.\nFor each known ID, resolves and\ntype-checks the vtable pointer.\nLogs unknown IDs (experimental\nrange 0xF0000000–0xFFFFFFFF).")
+
+    Component(lifecycle_mgr, "LifecycleManager", "C# class", "Calls initialise() on load.\nCalls shutdown() on unload.\nGuards against double-shutdown.\nForwards idv_host_services_t\nallocator to plug-ins.")
+
+    Component(fits_wrapper, "FitsReaderPlugin Wrapper", "C# class\nimplements IFitsPlugin", "Managed wrapper over\nIDV_CAPABILITY_FITS_IO vtable.\nExposes: ReadFull, ReadSubcube,\nWriteMask, GetHeader, ListHDUs.\nRealised by ST2.")
+
+    Component(wcs_wrapper, "WcsTransformPlugin Wrapper", "C# class\nimplements IWcsPlugin + IWcsMapping\n+ ICoordinateTransformer", "Managed wrapper over\nIDV_CAPABILITY_WCS_TRANSFORM vtable.\nThree-tier WCS facade per ADR-006.\nRealised by ST2.")
+
+    Component(analysis_wrapper, "DataAnalysisPlugin Wrapper", "C# class\nimplements IDataAnalysisPlugin\n+ IRawVoxelAccess\n+ ISourceStatsProvider", "Managed wrapper over\nIDV_CAPABILITY_DATA_ANALYSIS vtable.\nStats, histogram, downsampling,\nsource detection. Realised by ST2.")
+}
+
+Container_Boundary(native, "Native C/C++ Plug-ins  [shared libraries on disk]") {
+    Component(fits_dll, "fits_reader.dll / .so", "C/C++", "Wraps CFITSIO.\nExports idv_plugin_entry.\nProvides FITS_IO vtable.")
+    Component(wcs_dll, "wcs_transform.dll / .so", "C/C++", "Wraps Starlink AST.\nExports idv_plugin_entry.\nProvides WCS_TRANSFORM vtable.")
+    Component(analysis_dll, "data_analysis.dll / .so", "C/C++", "Statistical engine.\nExports idv_plugin_entry.\nProvides DATA_ANALYSIS vtable.")
+}
+
+Rel(loader, manifest_validator, "Passes manifest\nfor validation")
+Rel(manifest_validator, version_negotiator, "Passes on\nvalid manifest")
+Rel(version_negotiator, capability_binder, "Passes on\nnegotiated manifest")
+Rel(capability_binder, lifecycle_mgr, "Hands off\nbound capabilities")
+Rel(lifecycle_mgr, fits_wrapper, "Registers FITS_IO\nvtable bindings")
+Rel(lifecycle_mgr, wcs_wrapper, "Registers WCS_TRANSFORM\nvtable bindings")
+Rel(lifecycle_mgr, analysis_wrapper, "Registers DATA_ANALYSIS\nvtable bindings")
+Rel(fits_wrapper, fits_dll, "P/Invoke via\nC ABI vtable")
+Rel(wcs_wrapper, wcs_dll, "P/Invoke via\nC ABI vtable")
+Rel(analysis_wrapper, analysis_dll, "P/Invoke via\nC ABI vtable")
+
+note right of loader
+  Discovery path:
+  <PluginsDir>/  (configurable in Config.json)
+  Each .dll / .so loaded in turn.
+  Failed loads logged via ILogSink
+  and skipped — host continues.
+end note
+
+@enduml

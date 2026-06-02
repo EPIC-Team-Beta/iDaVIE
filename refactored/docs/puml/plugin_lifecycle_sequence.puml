@@ -1,0 +1,117 @@
+@startuml plugin_lifecycle_sequence
+skinparam sequenceArrowThickness 2
+skinparam sequenceBoxBorderColor #2E74B5
+skinparam sequenceBoxBackgroundColor #EBF3FB
+skinparam participantBorderColor #2E74B5
+skinparam participantBackgroundColor #1F3864
+skinparam participantFontColor White
+skinparam noteBorderColor #999999
+skinparam noteBackgroundColor #FFFBE6
+
+title Plug-in Lifecycle — Host / Plug-in Handshake Sequence\n(§6.6 — Plug-in ABI Specification v1.0.0)
+
+participant "KernelComposition\nRoot" as KCR #1F3864
+participant "PluginLoader" as PL #2E74B5
+participant "Manifest\nValidator" as MV #2E74B5
+participant "Version\nNegotiator" as VN #2E74B5
+participant "Capability\nBinder" as CB #2E74B5
+participant "Lifecycle\nManager" as LM #2E74B5
+participant "«C/C++ DLL»\nfits_reader.dll" as DLL #4A7C59
+
+== Discovery ==
+KCR -> PL : ScanPluginDirectory(path)
+PL -> PL : enumerate *.dll / *.so
+PL -> DLL : LoadLibrary(fits_reader.dll)
+activate DLL
+PL -> DLL : GetProcAddress("idv_plugin_entry")
+DLL --> PL : function pointer
+PL --> KCR : raw entry point resolved
+
+== Manifest Retrieval & Validation ==
+KCR -> MV : Validate(entryPoint())
+MV -> DLL : call idv_plugin_entry()
+DLL --> MV : const idv_plugin_manifest_t*
+note right of MV
+  Checks:
+  • struct_size >= required minimum
+  • plugin_name != NULL
+  • capabilities[] non-empty
+  • ABI contract version present
+end note
+alt manifest invalid
+    MV --> KCR : IDV_STATUS_INVALID_ARG
+    KCR -> PL : UnloadLibrary(handle)
+    KCR -> KCR : Log warning via ILogSink,\nskip plug-in, continue scan
+else manifest valid
+    MV --> KCR : manifest OK
+end
+
+== Version Negotiation ==
+KCR -> VN : Negotiate(manifest.contract_version)
+note right of VN
+  Checks:
+  • major in IDV_HOST_SUPPORTED_MAJORS
+  • minor <= IDV_CONTRACT_MINOR_CURRENT
+end note
+alt version mismatch
+    VN --> KCR : IDV_STATUS_ABI_VERSION_MISMATCH
+    KCR -> PL : UnloadLibrary(handle)
+else version accepted
+    VN --> KCR : version negotiated
+end
+
+== Capability Binding ==
+KCR -> CB : BindCapabilities(manifest.capabilities)
+loop for each capability_id in manifest
+    CB -> CB : lookup capability_id
+    alt known capability (FITS_IO / WCS_TRANSFORM / DATA_ANALYSIS)
+        CB -> CB : resolve vtable pointer,\ntype-check function pointers
+        CB -> CB : wrap in managed C# adapter\n(FitsReaderPlugin / WcsTransformPlugin\n/ DataAnalysisPlugin)
+    else experimental range 0xF0000000-0xFFFFFFFF
+        CB -> CB : log info via ILogSink,\nskip if experimental_binding disabled
+    else unknown non-experimental
+        CB --> KCR : IDV_STATUS_CAPABILITY_CONFLICT\nor warning (unknown ID)
+    end
+end
+CB --> KCR : all capabilities bound
+
+== Initialisation ==
+KCR -> LM : Initialise(manifest, host_services)
+LM -> DLL : call manifest.initialise(idv_host_services_t*)
+note right of DLL
+  Plug-in performs one-time setup:
+  • Allocate internal state
+  • Validate host_services allocator
+  • Register log callback
+end note
+DLL --> LM : IDV_STATUS_OK
+LM -> KCR : plug-in ready
+
+KCR -> KCR : RegisterPlugin(capabilityId, wrapper)\nin PluginRegistry
+
+== Normal Operation ==
+note over KCR, DLL
+  Capability vtable functions called from main Unity thread
+  unless vtable entry is explicitly marked IDV_THREAD_SAFE.
+  Input arrays: caller-owned, must not be retained past the call.
+  Output arrays: caller-allocated, plug-in writes into provided buffer.
+  All functions return idv_status_t; non-OK ⟹ ILogSink error already logged.
+end note
+
+KCR -> DLL : vtable.read_subcube(handle, bounds, buffer, capacity, &written)
+DLL --> KCR : IDV_STATUS_OK
+
+== Shutdown ==
+KCR -> LM : Shutdown(handle)
+LM -> DLL : call manifest.shutdown()
+DLL --> LM : IDV_STATUS_OK
+note right of LM
+  Guard: double-shutdown returns
+  IDV_STATUS_OK (no-op).
+end note
+LM --> KCR : shutdown complete
+KCR -> PL : UnloadLibrary(handle)
+deactivate DLL
+KCR -> KCR : DeregisterPlugin(capabilityId)\nfrom PluginRegistry
+
+@enduml

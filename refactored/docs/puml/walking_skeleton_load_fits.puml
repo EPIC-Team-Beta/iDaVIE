@@ -1,0 +1,129 @@
+@startuml walking_skeleton_load_fits
+skinparam sequenceArrowThickness 2
+skinparam sequenceBoxBorderColor #2E74B5
+skinparam sequenceBoxBackgroundColor #EBF3FB
+skinparam participantBorderColor #2E74B5
+skinparam participantBackgroundColor #1F3864
+skinparam participantFontColor White
+skinparam noteBorderColor #999999
+skinparam noteBackgroundColor #FFFBE6
+skinparam sequenceGroupBorderColor #2E74B5
+skinparam sequenceGroupHeaderFontColor White
+skinparam sequenceGroupBodyBackgroundColor #F0F6FF
+
+title Walking Skeleton — "User Loads FITS Cube, Requests Subcube, Exports Mask"\n(§8.4 — All Four Architectural Layers)
+
+box "Presentation Layer\n(ST4 Interaction / ST6 Desktop GUI)" #EBF3FB
+    participant "VR Controller\n[IInputProvider]" as VR
+    participant "CanvassDesktop\n[IDesktopMediator / IDesktopShell]" as CD
+end box
+
+box "Application Layer\n(ST1 Kernel Orchestration)" #D6E4F0
+    participant "FitsVolumeLoader\n[IVolumeLoader]" as Loader
+    participant "VolumeRegistry\n[IVolumeRegistry]" as Registry
+end box
+
+box "Domain Layer\n(ST1 — iDaVIE.Kernel.Contracts)" #C9DFF7
+    participant "VolumeDataSet\n[IVolumeDataSet]" as DS
+end box
+
+box "Infrastructure / Plug-in Host\n(ST2 Data I/O Plug-ins)" #D4EDDA
+    participant "FitsReaderPlugin\n[IFitsPlugin]" as FITS
+    participant "DataAnalysisPlugin\n[IDataAnalysisPlugin\n/ IRawVoxelAccess]" as DA
+    participant "MaskEditService\n[IMaskMutationService\n/ IMaskEditState]" as Mask
+end box
+
+participant "ILogSink\n[UnityLogSinkAdapter]" as Log
+
+== 1. User Triggers Load (Presentation -> Application) ==
+VR -> CD : OnLoadButtonPressed(filePath, hduIndex)
+note right of VR
+  VR controller trigger event routed
+  through IControllerEventStream.
+  Desktop: file-open dialog in
+  CanvassDesktop (IDesktopMediator).
+end note
+CD -> Log : LogInfo("ST6.Desktop", "Load requested: " + filePath)
+CD -> Loader : LoadAsync(filePath, SubcubeBounds.FullVolume, hduIndex, ct)
+
+== 2. FITS I/O (Application -> Infrastructure) ==
+activate Loader
+Loader -> Log : LogInfo("ST1.Loader", "Opening FITS file: " + filePath)
+Loader -> FITS : OpenFitsFile(filePath, hduIndex)
+activate FITS
+FITS -> FITS : validate FITS header,\nread NAXIS1/2/3, BITPIX
+FITS --> Loader : FitsMetadata (dims, header dict, HDU count)
+Loader -> FITS : ReadFullCube(handle, buffer, capacity, &written)
+FITS --> Loader : IDV_STATUS_OK, voxel buffer filled
+deactivate FITS
+
+== 3. Statistics (Infrastructure -> Domain) ==
+Loader -> DA : ComputeStats(voxelBuffer, dims)
+activate DA
+DA --> Loader : DataStats (Min, Max, Mean, Rms, ZScaleLow, ZScaleHigh)
+DA --> Loader : HistogramData (bins, range)
+deactivate DA
+
+== 4. Domain Aggregate Construction (Application -> Domain) ==
+Loader -> DS : VolumeDataSet.FromRaw(metadata, stats, histogram,\n  rawVoxelAccess=DA, maskEditState=Mask)
+activate DS
+note right of DS
+  VolumeDataSet is internal sealed.
+  Only KernelCompositionRoot / IVolumeLoader
+  may construct it. Sub-port handles
+  (RawVoxelAccess, MaskEditState) are
+  wired at construction.
+end note
+DS --> Loader : IVolumeDataSet reference
+deactivate DS
+
+== 5. Registry (Application -> Kernel) ==
+Loader -> Registry : Register(volume)
+Registry -> Registry : add to LoadedVolumes,\nSetActive(volume), fire Changed event
+Registry -> Log : LogInfo("ST1.Registry", "Volume registered: " + filePath)
+Registry --> CD : Changed event -> update GUI state
+Loader --> CD : IVolumeDataSet (load complete)
+deactivate Loader
+CD -> Log : LogInfo("ST6.Desktop", "Load complete — notifying VR view")
+CD -> VR : OnLoadComplete(volume)
+
+== 6. User Requests Subcube ==
+VR -> CD : OnSubcubeRequested(newBounds: SubcubeBounds)
+CD -> Loader : SetSubcube(volume, newBounds)
+activate Loader
+Loader -> FITS : ReadSubcube(handle, newBounds, buffer, capacity, &written)
+activate FITS
+FITS --> Loader : IDV_STATUS_OK
+deactivate FITS
+Loader -> DS : UpdateSubcubeBounds(newBounds)
+activate DS
+DS --> Loader : subcube bounds updated
+deactivate DS
+Loader -> Log : LogInfo("ST1.Loader", "Subcube updated")
+Loader --> CD : subcube ready
+deactivate Loader
+
+== 7. User Exports Mask ==
+VR -> CD : OnExportMaskRequested(savePath)
+CD -> Mask : SaveMask(overwrite=false)
+activate Mask
+Mask -> FITS : WriteMaskSubImage(handle, maskBuffer, dims)
+activate FITS
+FITS --> Mask : IDV_STATUS_OK
+deactivate FITS
+Mask -> Log : LogInfo("ST2.Mask", "Mask saved to " + savePath)
+Mask --> CD : SaveMask result (fileHandle)
+deactivate Mask
+CD -> Log : LogInfo("ST6.Desktop", "Mask export complete")
+CD --> VR : OnExportComplete()
+
+note over VR, Log
+  Walking Skeleton invariants verified:
+  ✓ Domain layer (VolumeDataSet) has zero Unity dependencies
+  ✓ All cross-layer calls go through declared interfaces
+  ✓ ILogSink is the sole logging path — no Debug.Log calls
+  ✓ No FindObjectOfType — all wiring via KernelCompositionRoot
+  ✓ NDepend rules LR-01 through LR-06 pass on CI
+end note
+
+@enduml

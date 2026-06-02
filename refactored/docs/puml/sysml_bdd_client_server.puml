@@ -1,0 +1,136 @@
+@startuml sysml_bdd_client_server
+skinparam classAttributeIconSize 0
+skinparam classBorderColor #2E74B5
+skinparam classBackgroundColor #EBF3FB
+skinparam classAttributeFontColor #1A1A1A
+skinparam classFontColor #1F3864
+skinparam classFontStyle Bold
+skinparam ArrowColor #2E74B5
+skinparam linetype ortho
+hide circle
+
+title SysML Block Definition Diagram — iDaVIE Client / Server Decomposition\n(T3 Architecture Overview — Sub-team 1)
+
+class "iDaVIE System" as System <<block>> {
+  -- parts --
+  + unityClient : UnityClient [1]
+  + nativePluginHost : NativePluginHost [1]
+  + vrRuntimeAdapter : VRRuntimeAdapter [1]
+  + desktopShell : DesktopShell [1]
+  -- flow ports --
+  + «flowPort» userInput : ControllerEventStream
+  + «flowPort» renderedFrame : StereoFrameStream
+  + «flowPort» fitsFilePath : string
+  + «flowPort» workspaceState : WorkspaceSnapshot
+}
+
+class "UnityClient" as UnityClient <<block>> {
+  -- parts --
+  + kernelCore : KernelCore [1]
+  + presentationLayer : PresentationLayer [1]
+  + applicationLayer : ApplicationLayer [1]
+  + domainLayer : DomainLayer [1]
+  -- value properties --
+  + unityVersion : string = "6.0 LTS"
+  + targetPlatform : string = "Win64/Linux64"
+  -- flow ports --
+  + «flowPort,in» pluginCapability : ICapabilityVtable
+  + «flowPort,out» pluginRequest : PluginCallParams
+}
+
+class "NativePluginHost" as PluginHost <<block>> {
+  -- parts --
+  + pluginLoader : PluginLoader [1]
+  + manifestValidator : ManifestValidator [1]
+  + versionNegotiator : VersionNegotiator [1]
+  + capabilityBinder : CapabilityBinder [1]
+  + lifecycleManager : LifecycleManager [1]
+  -- provided interfaces --
+  + «satisfy» IFitsPlugin
+  + «satisfy» IWcsPlugin
+  + «satisfy» IDataAnalysisPlugin
+  -- flow ports --
+  + «flowPort,in» pluginRequest : PluginCallParams
+  + «flowPort,out» pluginCapability : ICapabilityVtable
+}
+
+class "VRRuntimeAdapter" as VRAdapter <<block>> {
+  -- parts --
+  + openXRBinding : OpenXRBinding [1]
+  + steamVRFallback : SteamVRBinding [0..1]
+  -- provided interfaces --
+  + «satisfy» IControllerEventStream
+  + «satisfy» IVoiceCommandStream
+  -- value properties --
+  + refreshRateHz : int = 90
+  + renderResolution : string = "2064x2096 per eye"
+}
+
+class "DesktopShell" as Desktop <<block>> {
+  -- parts --
+  + canvassDesktop : CanvassDesktop [1]
+  + parameterPanels : ParameterPanel [*]
+  + debugTab : DebugTab [1]
+  -- provided interfaces --
+  + «satisfy» IDesktopShell
+  + «satisfy» IDesktopMediator
+  -- required interfaces --
+  + «require» IRenderSettings
+  + «require» IVolumeRegistry
+  + «require» ILogSink
+}
+
+class "KernelCore" as KernelCore <<block>> {
+  -- parts --
+  + compositionRoot : KernelCompositionRoot [1]
+  + pluginRegistry : PluginRegistry [1]
+  + volumeRegistry : VolumeRegistry [1]
+  + volumeLoader : FitsVolumeLoader [1]
+  + logSink : UnityLogSinkAdapter [1]
+  -- provided interfaces --
+  + «satisfy» IPluginRegistry
+  + «satisfy» IVolumeRegistry
+  + «satisfy» IVolumeLoader
+  + «satisfy» ILogSink
+  + «satisfy» IVolumeStateCapture
+}
+
+class "DomainLayer" as DomainLayer <<block>> {
+  -- parts --
+  + volumeDataSet : VolumeDataSet [0..*]
+  + sharedTypes : SharedTypesModule [1]
+  + delegates : DelegatesModule [1]
+  -- value properties --
+  + unityDependency : boolean = false
+  -- provided interfaces --
+  + «satisfy» IVolumeDataSet [0..*]
+}
+
+' Composition relationships (whole-part)
+System *-- UnityClient : unityClient
+System *-- PluginHost : nativePluginHost
+System *-- VRAdapter : vrRuntimeAdapter
+System *-- Desktop : desktopShell
+
+UnityClient *-- KernelCore : kernelCore
+UnityClient *-- DomainLayer : domainLayer
+
+' Flow connectors across the client / server boundary
+UnityClient "pluginRequest" --> "pluginRequest" PluginHost : «flow»
+PluginHost "pluginCapability" --> "pluginCapability" UnityClient : «flow»
+
+note bottom of DomainLayer
+  Architectural invariant:
+  DomainLayer has ZERO dependencies
+  on UnityEngine or any native DLL.
+  Enforced by NDepend rules LR-01 / LR-02.
+end note
+
+note bottom of PluginHost
+  Binary ABI contract governed by
+  Plug-in ABI Specification v1.0.0 (§6).
+  Each plug-in is independently loadable
+  without recompiling the kernel (ASR-01).
+end note
+
+@enduml

@@ -1,0 +1,82 @@
+@startuml ci_pipeline_integration
+title T3 7.2 CI Pipeline Integration - Quality Guild CI/CD
+
+skinparam shadowing false
+skinparam activityBorderColor #333333
+skinparam activityBackgroundColor #F8F9FA
+skinparam noteBackgroundColor #FFF8DC
+
+start
+
+:GitHub Actions workflow;
+note right
+Workflow:
+.github/workflows/build.yml
+
+Job:
+analysis / "Analyze"
+end note
+
+:Checkout repository;
+note right
+Step:
+actions/checkout@v6
+end note
+
+:Set up .NET;
+note right
+Step name:
+"Set up .NET"
+
+Version:
+8.0.x
+end note
+
+:Install SonarScanner for .NET;
+note right
+Step name:
+"Install SonarScanner for .NET"
+end note
+
+:Prepare native CFamily compile database;
+note right
+Step name:
+"Prepare native CFamily compile database"
+
+Generated artefact path:
+ci/sonar/native_compile_commands.json
+end note
+
+:Begin SonarQube analysis;
+note right
+Step name:
+"Begin SonarQube analysis"
+
+Key inputs:
+SONAR_PROJECT_KEY
+SONAR_SOURCE_INCLUSIONS
+SONAR_NATIVE_COMPILE_COMMANDS
+end note
+
+:Build analysis project;
+note right
+Step name:
+"Build analysis project"
+
+Command:
+dotnet build "${SONAR_ANALYSIS_PROJECT}"
+end note
+
+:End SonarQube analysis;
+note right
+Step name:
+"End SonarQube analysis"
+
+External quality output:
+SonarCloud / SonarQube project dashboard
+
+Current YAML has no upload-artifact step.
+end note
+
+stop
+@enduml

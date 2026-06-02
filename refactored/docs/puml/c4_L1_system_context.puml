@@ -1,0 +1,26 @@
+@startuml c4_L1_system_context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title C4 Level 1 — iDaVIE System Context
+
+Person(astronomer, "Astronomer", "Radio astronomer\nvisualising 3-D FITS data cubes.\nUses VR headset and/or Desktop GUI.")
+
+System(idavie, "iDaVIE", "Immersive Data Visualisation in\nExtended Reality.\nUnity 6 C# application with native\nC/C++ plug-ins for FITS I/O and\nWCS coordinate transformation.")
+
+System_Ext(fits_files, "FITS Data Files", "Radio-astronomy data cubes\nconforming to the FITS 4.0 standard.\nStored on local disk or network share.")
+
+System_Ext(vr_hw, "VR Hardware", "Meta Quest / SteamVR compatible\nheadset and controllers.\nOpenXR-compliant runtime.")
+
+System_Ext(ast_lib, "Starlink AST Library", "C library for World Coordinate\nSystem (WCS) transformations.\nLoaded at runtime as a native DLL.")
+
+System_Ext(cfitsio, "CFITSIO Library", "NASA C library for low-level\nFITS file I/O.\nLoaded at runtime as a native DLL.")
+
+Rel(astronomer, idavie, "Loads FITS cubes,\npaints masks, inspects\nsources", "VR controllers / Desktop GUI")
+Rel(idavie, fits_files, "Reads FITS cubes\nand writes mask files", "File I/O via CFITSIO")
+Rel(idavie, vr_hw, "Renders stereo frames,\nreads controller input", "OpenXR / SteamVR SDK")
+Rel(idavie, ast_lib, "Transforms pixel coords\nto sky coordinates", "P/Invoke via AstTool DLL")
+Rel(idavie, cfitsio, "Reads/writes FITS\nbinary data", "P/Invoke via FitsReader DLL")
+
+@enduml

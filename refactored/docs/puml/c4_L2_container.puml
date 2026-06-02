@@ -1,0 +1,41 @@
+@startuml c4_L2_container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title C4 Level 2 — iDaVIE Container Diagram
+
+Person(astronomer, "Astronomer", "Radio astronomer\nusing VR or Desktop GUI")
+
+System_Boundary(idavie, "iDaVIE System") {
+
+    Container(unity_app, "Unity Client Application", "C# / Unity 6", "Main application runtime.\nContains Domain, Application,\nInfrastructure, and Presentation layers.\nHosts the micro-kernel and all\nC# sub-team code.")
+
+    Container(plugin_host, "Kernel / Plug-in Host", "C# / iDaVIE.Infrastructure", "Micro-kernel boundary.\nDiscovers, loads, validates, and manages\nthe lifecycle of native C/C++ plug-ins.\nExposes versioned ABI vtable contracts.")
+
+    Container(fits_plugin, "FitsReader Plug-in", "C/C++ shared library", "FITS cube reading and writing.\nWraps CFITSIO.\nExposes IDV_CAPABILITY_FITS_IO vtable.\nABI version 1.0.0.")
+
+    Container(wcs_plugin, "WcsTransform Plug-in", "C/C++ shared library", "WCS coordinate transformations.\nWraps Starlink AST library.\nExposes IDV_CAPABILITY_WCS_TRANSFORM vtable.\nABI version 1.0.0.")
+
+    Container(analysis_plugin, "DataAnalysis Plug-in", "C/C++ shared library", "Voxel statistics, downsampling,\nsource detection.\nExposes IDV_CAPABILITY_DATA_ANALYSIS vtable.\nABI version 1.0.0.")
+
+    Container(vr_adapter, "VR Runtime Adapter", "C# / iDaVIE.Presentation", "Abstraction over OpenXR /\nSteamVR / OculusSDK.\nExposes IControllerEventStream\nand IVoiceCommandStream.")
+
+    Container(desktop_shell, "Desktop Shell", "C# / iDaVIE.Presentation", "WPF-style 2-D control panel\nrunning alongside the VR view.\nCanvassDesktop as sole\nIDesktopMediator implementation.\nOwned by ST6.")
+}
+
+System_Ext(fits_files, "FITS Data Files", "Local disk / network")
+System_Ext(vr_hw, "VR Hardware", "Meta Quest / SteamVR")
+
+Rel(astronomer, vr_adapter, "VR controller input\nand headset view", "OpenXR")
+Rel(astronomer, desktop_shell, "Desktop GUI interaction", "Mouse / keyboard")
+Rel(unity_app, plugin_host, "Loads plug-ins,\ncalls capability vtables", "idv_plugin_entry() ABI")
+Rel(plugin_host, fits_plugin, "FITS_IO capability\ncalls", "C ABI vtable")
+Rel(plugin_host, wcs_plugin, "WCS_TRANSFORM\ncapability calls", "C ABI vtable")
+Rel(plugin_host, analysis_plugin, "DATA_ANALYSIS\ncapability calls", "C ABI vtable")
+Rel(fits_plugin, fits_files, "Reads/writes\nFITS binary data", "CFITSIO / file I/O")
+Rel(vr_adapter, vr_hw, "Stereo rendering,\ncontroller polling", "OpenXR / SteamVR SDK")
+Rel(unity_app, desktop_shell, "State reflection\nvia IDesktopShell", "Kernel port (ST1)")
+Rel(unity_app, vr_adapter, "Input events,\nlocomotion commands", "IControllerEventStream")
+
+@enduml

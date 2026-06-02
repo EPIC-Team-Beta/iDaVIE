@@ -1,0 +1,188 @@
+@startuml class_volumedatasetrenderer_before_after
+title VolumeDataSetRenderer Before / After Refactoring
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+left to right direction
+
+package "Before: legacy VolumeDataSetRenderer" as Before #FFECEC {
+  class "VolumeDataSetRenderer\n<<Unity MonoBehaviour>>" as LegacyVDR {
+    + 1402 LOC
+    + 40+ public members
+    + WMC = 142
+    + CBO = 44
+    + LCOM = 96%
+    --
+    + Start()
+    + Update()
+    + OnRenderObject()
+    + LoadRegionData()
+    + SetCursorPosition()
+    + PaintMask()
+    + SaveMask()
+    + PopulateRestFrequencyList()
+    + ResetThresholds()
+    + ShiftColorMap(delta)
+    + ConvertWorldToVoxel(...)
+    + ConvertVoxelToWorld(...)
+  }
+
+  note bottom of LegacyVDR
+    Monolithic responsibilities:
+    - material and shader uniform binding
+    - Texture3D / ComputeBuffer lifecycle
+    - camera positioning and field-of-view logic
+    - foveated rendering policy
+    - coordinate conversion
+    - region/subcube selection
+    - mask mutation and undo/redo coordination
+    - persistence/save dispatch
+    - UI status/toast coupling
+
+    Current CK/NDepend risk:
+    WMC 142, CBO 44, LCOM 96%, LOC 1402
+    ND1000 / ND1003: FAIL
+  end note
+}
+
+package "After: decomposed ST3 rendering structure" as After #ECF7FF {
+  class "VolumeDataSetRenderer\n<<thin Unity MonoBehaviour>>\nST3" as ThinVDR {
+    - VolumeMaterialBinder materialBinder
+    - VolumeTextureManager textureManager
+    - VolumeCameraDriver cameraDriver
+    - FoveatedSamplingPolicy foveatedPolicy
+    - VolumeCoordinateService coordinateService
+    - RegionSelection regionSelection
+    --
+    + Bind(volume: IVolumeDataSet)
+    + Update()
+    + OnRenderObject()
+  }
+
+  interface "IVolumeDataSet\n<<ST1>>" as IVolumeDataSet {
+    + Status
+    + Extents
+    + SubcubeBounds
+    + RawVoxelAccess
+    + MaskEditState
+    + GetStats()
+    + GetHistogram()
+    + FormatCoord(coord)
+  }
+
+  interface "IRawVoxelAccess\n<<ST1 contract, ST2 impl>>" as IRawVoxelAccess {
+    + Descriptor
+    + CurrentGeneration
+    + GetSlice(zIndex)
+    + GetRegion(...)
+  }
+
+  interface "IMaskEditState\n<<ST1 contract, ST2 impl>>" as IMaskEditState {
+    + GetMaskValue(x, y, z)
+    + GetMaskSlice(axis, sliceIndex)
+  }
+
+  interface "IMaskMutationService\n<<ST2>>" as IMaskMutationService {
+    + ApplyBrush(stroke)
+    + FinishStroke()
+    + Undo()
+    + Redo()
+  }
+
+  interface "ILogSink\n<<ST1>>" as ILogSink {
+    + LogInfo(source, message)
+    + LogWarning(source, message)
+    + LogError(source, message)
+  }
+
+  class "VolumeMaterialBinder\nST3" as VolumeMaterialBinder {
+    + BindMaterial(volume)
+    + ApplyColourMap()
+    + ApplyScaling()
+    + ApplyThresholds()
+  }
+
+  class "VolumeTextureManager\nST3" as VolumeTextureManager {
+    + UploadVolumeTexture(raw)
+    + RebuildMaskBuffers(mask)
+    + ReleaseGpuResources()
+  }
+
+  class "VolumeCameraDriver\nST3" as VolumeCameraDriver {
+    + PositionCamera(volume)
+    + UpdateFieldOfView(volume)
+    + FitToBounds(extents)
+  }
+
+  class "FoveatedSamplingPolicy\nST3" as FoveatedSamplingPolicy {
+    + EvaluateSamplingBudget(volume)
+    + ApplyFoveation(settings)
+  }
+
+  class "VolumeCoordinateService\nST3, Unity-free" as VolumeCoordinateService {
+    + ConvertVoxelToWorld(coord)
+    + ConvertWorldToVoxel(world)
+    + GetVoxelPosition(...)
+  }
+
+  class "RegionSelection\n<<value object>>\nST1 SharedTypes" as RegionSelection {
+    + StartVoxel
+    + EndVoxel
+    + ToSubcubeBounds()
+  }
+
+  class "SharedTypes\n<<value types>>\nST1" as SharedTypes {
+    + CartesianCoord
+    + SubcubeBounds
+    + VolumeExtents
+    + AxisUnits
+  }
+}
+
+LegacyVDR ..> ThinVDR : refactored into
+
+ThinVDR *-- VolumeMaterialBinder
+ThinVDR *-- VolumeTextureManager
+ThinVDR *-- VolumeCameraDriver
+ThinVDR *-- FoveatedSamplingPolicy
+ThinVDR *-- VolumeCoordinateService
+ThinVDR *-- RegionSelection
+
+ThinVDR ..> IVolumeDataSet : reads volume state
+ThinVDR ..> ILogSink : logs lifecycle events
+
+VolumeMaterialBinder ..> IVolumeDataSet
+VolumeMaterialBinder ..> ILogSink
+
+VolumeTextureManager ..> IVolumeDataSet
+VolumeTextureManager ..> IRawVoxelAccess
+VolumeTextureManager ..> IMaskEditState
+VolumeTextureManager ..> ILogSink
+
+VolumeCameraDriver ..> IVolumeDataSet
+VolumeCameraDriver ..> ILogSink
+
+FoveatedSamplingPolicy ..> IVolumeDataSet
+
+VolumeCoordinateService ..> IVolumeDataSet : uses FormatCoord()
+VolumeCoordinateService ..> SharedTypes
+
+RegionSelection ..> SharedTypes
+
+IVolumeDataSet o-- IRawVoxelAccess
+IVolumeDataSet o-- IMaskEditState
+
+note bottom of After
+  Refactoring target:
+  - no successor class above 300 LOC
+  - WMC <= 40 per class
+  - CBO <= 15 per class
+  - LCOM <= 50%
+  - temporal coupling with VolumeDataSet < 20%
+  - ND1000 / ND1003: 0 violations
+end note
+
+@enduml

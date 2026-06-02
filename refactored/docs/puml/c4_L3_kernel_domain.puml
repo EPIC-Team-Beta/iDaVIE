@@ -1,0 +1,60 @@
+@startuml c4_L3_kernel_domain
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title C4 Level 3 — Kernel & Domain Layer Components (ST1 — iDaVIE.Kernel.Contracts)
+
+Container_Boundary(kernel, "Kernel / Micro-kernel Core  [iDaVIE.Kernel + iDaVIE.Infrastructure]") {
+
+    Component(composition_root, "KernelCompositionRoot", "C# sealed class", "Sole location permitted to call 'new'\non cross-layer concrete types.\nWires all dependencies via\nconstructor injection.\nBootstraps plug-in host and registry.")
+
+    Component(plugin_registry, "PluginRegistry", "C# sealed class\nimplements IPluginRegistry", "Service Locator at the kernel boundary\nonly. Loads, holds, and exposes plug-ins\nvia GetPlugin<T>(). Not accessible\nfrom Domain or Application layers.")
+
+    Component(volume_registry, "VolumeRegistry", "C# sealed class\nimplements IVolumeRegistry", "Single source of truth for loaded\nIVolumeDataSet instances and active\nvolume. Fires Changed event on every\nadd, remove, or SetActive call.\n[ADR-008]")
+
+    Component(volume_loader, "FitsVolumeLoader", "C# sealed class\nimplements IVolumeLoader", "Loads FITS cubes: delegates I/O to\nST2's IFitsPlugin, registers loaded\nvolumes in IVolumeRegistry.\nUnload deregisters and disposes.\n[ADR-004]")
+
+    Component(volume_dataset, "VolumeDataSet", "C# internal sealed class\nimplements IVolumeDataSet", "Domain aggregate: identity, lifecycle,\nsubcube bounds, header dictionary,\nstats/histogram view, WCS frame params.\nHolds IRawVoxelAccess and\nIMaskEditState sub-port handles.\n[ADR-004, M-01, M-27]")
+
+    Component(log_sink_adapter, "UnityLogSinkAdapter", "C# sealed class\nimplements ILogSink", "Production logging bridge to\nUnity Debug.Log. Sole permitted\ncaller of UnityEngine.Debug.\nFires EntryLogged event.\n[ADR-009]")
+
+    Component(benchmark, "BenchmarkHarness", "C# class", "Anti-corruption layer over\nUnity Profiler. Used by ST1\nfor CK metric snapshots.")
+
+    Component(config, "Config", "C# sealed class", "Loaded once at startup from JSON.\nRead by every sub-team.\nSource-verified: Assets/Scripts/\nVolumeData/Config.cs")
+}
+
+Container_Boundary(contracts, "Kernel Contracts  [iDaVIE.Kernel.Contracts + iDaVIE.Kernel.Contracts.Types]") {
+
+    Component(ivolume_dataset, "IVolumeDataSet", "C# interface", "Read-only view of the volume aggregate.\nStatus, FilePath, HduIndex, Extents,\nSubcubeBounds, HeaderDictionary,\nGetStats(), GetHistogram(), GetAxisUnits(),\nFormatCoord(), RawVoxelAccess,\nMaskEditState. [ADR-004, M-27]")
+
+    Component(ivolume_loader, "IVolumeLoader", "C# interface", "LoadAsync(path, bounds, hdu, ct),\nUnload(volume). Contract for loading\na FITS cube into a VolumeDataSet.")
+
+    Component(ivolume_registry, "IVolumeRegistry", "C# interface", "LoadedVolumes, ActiveVolume,\nSetActive(volume), Changed event.\n[ADR-008]")
+
+    Component(ilog_sink, "ILogSink", "C# interface", "Log(level, source, message),\nLogInfo/Warning/Error helpers,\nEntryLogged event, RecentEntries,\nMinimumStoredLevel. [ADR-009]")
+
+    Component(idesktop_shell, "IDesktopShell", "C# interface", "Cross-cutting UI-mount port.\nDeclared in ST1 to avoid\nST6 ↔ ST7 package cycle.\nRealised by ST6 CanvassDesktop.\n[M-26]")
+
+    Component(ivolume_capture, "IVolumeStateCapture", "C# interface", "Capture() : VolumeStateDto,\nRestore(dto). Persistence port\nfor ST7 workspace save/restore.\n[ADR-007]")
+
+    Component(plugin_contracts, "Plug-in ABI Contracts\n(IFitsPlugin, IWcsPlugin,\nIWcsMapping, IDataAnalysisPlugin,\nIRawVoxelAccess, IMaskEditState,\nIBrushStrokeHistory)", "C# interfaces", "Versioned plug-in ABIs declared\nby ST1. Realised by ST2 plug-ins.\nSemver-stable within major version.\n[ADR-006, §6 ABI Spec]")
+
+    Component(shared_types, "SharedTypes Module\n(CartesianCoord, VolumeExtents,\nSubcubeBounds, DataStats,\nHistogramData, AxisUnits,\nFeatureColour)", "C# readonly record structs\n/ sealed classes", "Boundary value objects.\nNo Unity dependencies.\nGoverned by inclusion criterion:\n≥3 sub-team consumers or in ST1\nown contracts. [ADR-010, M-21]")
+
+    Component(delegates, "Delegates.cs", "C# delegate types", "Centralised event delegate\ndeclarations: DatasetLoaded,\nDatasetUnloaded, SubcubeChanged,\nConfigChanged, MaskBufferChanged,\nBrushHistoryChanged, etc.\nAdditions require ADR-002 sign-off.\n[M-15]")
+}
+
+Rel(composition_root, plugin_registry, "Initialises and\npopulates")
+Rel(composition_root, volume_registry, "Wires as\nkernel singleton")
+Rel(composition_root, volume_loader, "Wires with\nIFitsPlugin + IVolumeRegistry")
+Rel(composition_root, log_sink_adapter, "Wires as\nILogSink singleton")
+Rel(volume_loader, volume_dataset, "Creates and registers\nvia IVolumeRegistry")
+Rel(volume_dataset, ivolume_dataset, "Implements\n(internal sealed)")
+Rel(volume_registry, ivolume_registry, "Implements")
+Rel(volume_loader, ivolume_loader, "Implements")
+Rel(log_sink_adapter, ilog_sink, "Implements")
+Rel(volume_dataset, plugin_contracts, "Holds sub-port\nhandles (RawVoxelAccess,\nMaskEditState)")
+Rel(ivolume_dataset, shared_types, "Uses in\nsignatures")
+
+@enduml
