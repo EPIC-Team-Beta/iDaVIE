@@ -85,6 +85,7 @@ ExportedObj/
 .consulo/
 *.csproj
 !iDaVIE.SonarAnalysis.csproj
+!tests/iDaVIE.UI.Tests.csproj
 ci/sonar/native_compile_commands.json
 *.unityproj
 *.sln
@@ -505,6 +506,7 @@ ExportedObj/
 .consulo/
 *.csproj
 !iDaVIE.SonarAnalysis.csproj
+!tests/iDaVIE.UI.Tests.csproj
 *.unityproj
 *.sln
 *.suo

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>iDaVIE.UI.Tests</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <!-- Suppress nullable warnings from legacy files that predate nullable annotations -->
+    <NoWarn>CS8618;CS8625;CS8632</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Stubs for shared contract types owned by other sub-teams (ST1, ST3) -->
+    <Compile Include="Stubs/SharedContractStubs.cs" />
+    <!-- ColorMapEnum lives in the original Assets tree (global namespace) -->
+    <Compile Include="../Assets/Scripts/Tools/ColorMapEnum.cs" />
+    <!-- Interface contracts the ViewModels depend on (ST3 rendering, ST5 features) -->
+    <Compile Include="../refactored/Rendering/IRestFrequencyCatalogue.cs" />
+    <Compile Include="../refactored/Features/IFeatureContracts.cs" />
+    <Compile Include="../refactored/Features/IFeatureSetQuery.cs" />
+    <!-- ViewModels under test -->
+    <Compile Include="../refactored/UI/RenderTabViewModel.cs" />
+    <Compile Include="../refactored/UI/SourcesTabViewModel.cs" />
+    <!-- Test doubles -->
+    <Compile Include="Fakes/FakeRenderSettings.cs" />
+    <Compile Include="Fakes/FakeRenderSettingsMutator.cs" />
+    <Compile Include="Fakes/FakeRestFrequencyCatalogue.cs" />
+    <Compile Include="Fakes/FakeFeatureSetQuery.cs" />
+    <Compile Include="Fakes/FakeFeatureSelectionService.cs" />
+    <Compile Include="Fakes/FakeFeature.cs" />
+    <!-- Tests -->
+    <Compile Include="RenderTabViewModelTests.cs" />
+    <Compile Include="SourcesTabViewModelTests.cs" />
+  </ItemGroup>
+</Project>
