@@ -9,8 +9,8 @@ namespace iDaVIE.Persistence.Application
 {
     internal sealed class ValidationAndRecoveryService
     {
-        /// <summary>Verifies the integrity record against the on-disk payload.</summary>
-        public bool ValidateIntegrity(StoredState state) => throw new System.NotImplementedException();
+        /// <summary>Verifies the JSON payload against its expected SHA-256 hash.</summary>
+        public bool ValidateIntegrity(string json, string expectedSha256) => throw new System.NotImplementedException();
 
         /// <summary>Applies any necessary migration rules to bring an older envelope
         /// up to the current SchemaVersion.</summary>

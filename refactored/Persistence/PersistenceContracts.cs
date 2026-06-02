@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// PersistenceContracts — declaration site for the ST6-only slice of the surface
-// ST7 publishes (IStateIndexQuery, IPersistenceEvents) plus the SavedStateInfo
-// DTO. The save/load command ports (IWorkspaceSaveCommand, IWorkspaceLoadCommand)
-// invoked by both ST4 and ST6 live on the kernel floor instead — see
-// Kernel/Contracts/IWorkspaceCommands.cs.
+// PersistenceContracts — sole declaration site for the cross-team interface
+// surface ST7 publishes (IWorkspaceSaveCommand, IWorkspaceLoadCommand,
+// IStateIndexQuery, IPersistenceEvents) plus the SavedStateInfo DTO.
 // Canonical signatures from shared_interfaces.md §7; "ST7 wins by default"
 // (interface_resolutions.md line 31).
 //
@@ -28,10 +26,19 @@ using System.Collections.Generic;
 
 namespace iDaVIE.Persistence
 {
-    // IWorkspaceSaveCommand / IWorkspaceLoadCommand were relocated to
-    // iDaVIE.Kernel.Contracts (Kernel/Contracts/IWorkspaceCommands.cs) so ST4 and
-    // ST6 can invoke save/load without a back-edge into this assembly. The
-    // remaining ST7 surface below has no lower-layer consumer.
+    // Consumed by: ST4 (voice/quick-menu trigger), ST6 (desktop save button).
+    public interface IWorkspaceSaveCommand
+    {
+        /// <summary>Fire-and-forget. Outcome reported via IPersistenceEvents.</summary>
+        void Save();
+    }
+
+    // Consumed by: ST4 (voice restore), ST6 (desktop load button).
+    public interface IWorkspaceLoadCommand
+    {
+        /// <summary>Triggers load by opaque stateId obtained from IStateIndexQuery.</summary>
+        void Load(string stateId);
+    }
 
     public sealed class SavedStateInfo
     {
