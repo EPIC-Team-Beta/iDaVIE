@@ -53,6 +53,27 @@ jobs:
             refactored/Data/DataAnalysisPlugin.cs \
             refactored/Data/NativePluginLoader.cs
 
+      - name: Team 1 public interfaces have test doubles
+        run: |
+          interfaces="$(grep -RhoE "public interface [A-Za-z0-9_]+" \
+            refactored/Kernel \
+            refactored/External \
+            refactored/Rendering/VolumeDataSet.cs \
+            refactored/Data/FitsReaderPlugin.cs \
+            refactored/Data/WcsTransformPlugin.cs \
+            refactored/Data/DataAnalysisPlugin.cs \
+            refactored/Data/NativePluginLoader.cs \
+            | awk '{print $3}' | sort -u)"
+
+          missing=0
+          for iface in $interfaces; do
+            if ! grep -R -E "class (Fake|Stub|Mock|InMemory|Test)[A-Za-z0-9_]*[[:space:]]*:[^{]*\\b${iface}\\b" refactored/Tests >/dev/null; then
+              echo "Missing test double for ${iface}"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - name: Compile when project files exist
         run: |
           projects="$(find refactored -name '*.csproj')"
